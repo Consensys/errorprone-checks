@@ -1,0 +1,105 @@
+version: 2.1
+orbs:
+  slack: circleci/slack@3.4.1
+
+executors:
+  executor_med:  # 2cpu, 4G ram
+    docker:
+      - image: circleci/openjdk:11.0.8-jdk-buster
+        auth:
+          username: $DOCKER_USER_RO
+          password: $DOCKER_PASSWORD_RO
+    resource_class: medium
+    working_directory: ~/project
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx2048m
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2 -Xmx2048m
+
+commands:
+  prepare:
+    description: "Prepare"
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore cached gradle dependencies
+          keys:
+            - deps-{{ checksum "build.gradle" }}-{{ .Branch }}-{{ .Revision }}
+            - deps-{{ checksum "build.gradle" }}
+            - deps-
+  notify:
+    description: "Notify Slack"
+    steps:
+      - slack/status:
+          fail_only: true
+          only_for_branches: 'main'
+
+jobs:
+  build:
+    executor: executor_med
+    steps:
+      - prepare
+      - run:
+          name: Clean
+          command: ./gradlew clean
+      - run:
+          name: Test
+          command: ./gradlew test
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+            - store_test_results:
+                path: ~/test-results
+            - store_artifacts:
+                path: ~/test-results/junit
+      - run:
+          name: Build
+          command: ./gradlew build
+      - notify
+      - save_cache:
+          name: Caching gradle dependencies
+          key: deps-{{ checksum "build.gradle" }}-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .gradle
+            - ~/.gradle
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - ./
+
+  publish:
+    executor: executor_med
+    steps:
+      - prepare
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Publish
+          command: ./gradlew --no-daemon --parallel publish
+      - notify
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            tags: &filters-release-tags
+              only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
+          context:
+            - dockerhub-quorumengineering-ro
+      - publish:
+          filters:
+            tags:
+              <<: *filters-release-tags
+            branches:
+              only:
+                - main
+                - /^release-.*/
+          requires:
+            - build
+          context:
+            - cloudsmith-protocols
+            - dockerhub-quorumengineering-ro
