@@ -100,7 +100,7 @@ public class UseFastutil extends BugChecker
         return describeMatch(tree);
       }
     }
-    return Description.NO_MATCH;
+    return NO_MATCH;
   }
 
   private Description checkMap(ExpressionTree tree, VisitorState state) {
@@ -112,7 +112,7 @@ public class UseFastutil extends BugChecker
         }
       }
     }
-    return Description.NO_MATCH;
+    return NO_MATCH;
   }
 
   private boolean isPrimitive(Type type, VisitorState state) {
