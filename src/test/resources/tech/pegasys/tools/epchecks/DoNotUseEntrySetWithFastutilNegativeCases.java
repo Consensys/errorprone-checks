@@ -1,5 +1,5 @@
 /*
- * Copyright ConsenSys AG.
+ * Copyright 2022 ConsenSys AG.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,7 +17,7 @@ package tech.pegasys.tools.epchecks;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-public class FastutilDeprecatedMethodNegativeCases {
+public class DoNotUseEntrySetWithFastutilNegativeCases {
 
   public void useTypeSpecificEntrySet() {
     Int2ObjectMap<String> map_a = new Int2ObjectOpenHashMap<>();

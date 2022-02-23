@@ -16,23 +16,23 @@ import com.google.errorprone.CompilationTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class FastutilDeprecatedMethodTest {
+public class DoNotUseEntrySetWithFastutilTest {
 
   private CompilationTestHelper compilationHelper;
 
   @BeforeEach
   public void setup() {
     compilationHelper =
-        CompilationTestHelper.newInstance(FastutilDeprecatedMethod.class, getClass());
+        CompilationTestHelper.newInstance(DoNotUseEntrySetWithFastutil.class, getClass());
   }
 
   @Test
   public void doNotReturnNullPositiveCases() {
-    compilationHelper.addSourceFile("FastutilDeprecatedMethodPositiveCases.java").doTest();
+    compilationHelper.addSourceFile("DoNotUseEntrySetWithFastutilPositiveCases.java").doTest();
   }
 
   @Test
   public void doNotReturnNullNegativeCases() {
-    compilationHelper.addSourceFile("FastutilDeprecatedMethodNegativeCases.java").doTest();
+    compilationHelper.addSourceFile("DoNotUseEntrySetWithFastutilNegativeCases.java").doTest();
   }
 }

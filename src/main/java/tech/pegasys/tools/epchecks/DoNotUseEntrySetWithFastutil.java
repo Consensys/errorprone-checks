@@ -25,11 +25,13 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 
 @BugPattern(
-    name = "FastutilDeprecatedMethod",
-    summary = "Do not use fastutil deprecated methods.",
+    name = "DoNotUseEntrySetWithFastutil",
+    summary = "Do not use entrySet() with fastutil maps.",
     severity = WARNING)
-public class FastutilDeprecatedMethod extends BugChecker implements MethodInvocationTreeMatcher {
+public class DoNotUseEntrySetWithFastutil extends BugChecker
+    implements MethodInvocationTreeMatcher {
 
+  // All of the map classes inherit this class.
   private static final String FASTUTIL_FUNCTION = "it.unimi.dsi.fastutil.Function";
   private static final Matcher<ExpressionTree> DEPRECATED_ENTRYSET =
       instanceMethod().onDescendantOfAny(FASTUTIL_FUNCTION).named("entrySet");
@@ -37,7 +39,9 @@ public class FastutilDeprecatedMethod extends BugChecker implements MethodInvoca
   @Override
   public Description matchMethodInvocation(MethodInvocationTree tree, VisitorState state) {
     if (DEPRECATED_ENTRYSET.matches(tree, state)) {
-      return buildDescription(tree).setMessage("Do not use deprecated entrySet method.").build();
+      return buildDescription(tree)
+          .setMessage("Use type-specific entrySet method instead.")
+          .build();
     }
     return Description.NO_MATCH;
   }

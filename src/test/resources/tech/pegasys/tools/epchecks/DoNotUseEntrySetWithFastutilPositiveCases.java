@@ -1,5 +1,5 @@
 /*
- * Copyright ConsenSys AG.
+ * Copyright 2022 ConsenSys AG.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,18 +12,18 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package tech.pegasys.tools.epchecks;
+
+import java.util.Map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import java.util.Map;
 
-public class FastutilDeprecatedMethodPositiveCases {
+public class DoNotUseEntrySetWithFastutilPositiveCases {
 
   public void useDeprecatedEntrySet() {
     Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
-    // BUG: Diagnostic contains: Do not use deprecated entrySet
+    // BUG: Diagnostic contains: Use type-specific entrySet method instead
     for (Map.Entry<Integer, String> m : map.entrySet()) {
       System.out.println(m.getValue());
     }
