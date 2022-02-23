@@ -50,7 +50,6 @@ public class UseFastutil extends BugChecker
           constructor().forClass("java.util.ArrayList"),
           constructor().forClass("java.util.HashSet"),
           constructor().forClass("java.util.LinkedHashSet"),
-          constructor().forClass("java.util.LinkedList"),
           constructor().forClass("java.util.Stack"),
           constructor().forClass("java.util.TreeSet"));
 

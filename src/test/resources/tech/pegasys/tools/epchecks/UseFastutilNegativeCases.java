@@ -65,6 +65,17 @@ import it.unimi.dsi.fastutil.ints.IntStack;
 import it.unimi.dsi.fastutil.longs.LongStack;
 import it.unimi.dsi.fastutil.shorts.ShortStack;
 
+// There are no BooleanLinkedOpenHashSet type.
+import it.unimi.dsi.fastutil.bytes.ByteLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.chars.CharLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.doubles.DoubleLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.floats.FloatLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.shorts.ShortLinkedOpenHashSet;
+
 // There are no Boolean2<>Map types.
 import it.unimi.dsi.fastutil.bytes.Byte2BooleanMap;
 import it.unimi.dsi.fastutil.bytes.Byte2BooleanOpenHashMap;
@@ -249,7 +260,9 @@ import it.unimi.dsi.fastutil.shorts.Short2ShortOpenHashMap;
 
 public class UseFastutilNegativeCases {
 
-  static public void usesJavaOf() {
+  /* LISTS */
+
+  static public void usesOf() {
     BooleanList list_of_booleans = BooleanList.of();
     BooleanSet set_of_booleans = BooleanSet.of();
     ByteList list_of_bytes = ByteList.of();
@@ -272,20 +285,7 @@ public class UseFastutilNegativeCases {
     ShortSet set_of_shorts = ShortSet.of();
   }
 
-  static public void usesJavaSet() {
-    BooleanSet booleans = new BooleanOpenHashSet();
-    ByteSet bytes = new ByteOpenHashSet();
-    CharSet chars = new CharOpenHashSet();
-    DoubleSet doubles = new DoubleOpenHashSet();
-    FloatSet floats = new FloatOpenHashSet();
-    IntSet ints = new IntOpenHashSet();
-    LongSet longs = new LongOpenHashSet();
-    ObjectSet objects = new ObjectOpenHashSet();
-    ReferenceSet references = new ReferenceOpenHashSet();
-    ShortSet shorts = new ShortOpenHashSet();
-  }
-
-  static public void usesJavaList() {
+  static public void usesArrayList() {
     BooleanList booleans = new BooleanArrayList();
     ByteList bytes = new ByteArrayList();
     CharList chars = new CharArrayList();
@@ -298,7 +298,42 @@ public class UseFastutilNegativeCases {
     ShortList shorts = new ShortArrayList();
   }
 
-  static public void usesJavaMap() {
+  static public void usesOpenHashSet() {
+    BooleanSet booleans = new BooleanOpenHashSet();
+    ByteSet bytes = new ByteOpenHashSet();
+    CharSet chars = new CharOpenHashSet();
+    DoubleSet doubles = new DoubleOpenHashSet();
+    FloatSet floats = new FloatOpenHashSet();
+    IntSet ints = new IntOpenHashSet();
+    LongSet longs = new LongOpenHashSet();
+    ObjectSet objects = new ObjectOpenHashSet();
+    ReferenceSet references = new ReferenceOpenHashSet();
+    ShortSet shorts = new ShortOpenHashSet();
+  }
+
+  static public void usesLinkedOpenHashSet() {
+    ByteLinkedOpenHashSet bytes = new ByteLinkedOpenHashSet();
+    CharLinkedOpenHashSet chars = new CharLinkedOpenHashSet();
+    DoubleLinkedOpenHashSet doubles = new DoubleLinkedOpenHashSet();
+    FloatLinkedOpenHashSet floats = new FloatLinkedOpenHashSet();
+    IntLinkedOpenHashSet ints = new IntLinkedOpenHashSet();
+    LongLinkedOpenHashSet longs = new LongLinkedOpenHashSet();
+    ObjectLinkedOpenHashSet objects = new ObjectLinkedOpenHashSet();
+    ReferenceLinkedOpenHashSet references = new ReferenceLinkedOpenHashSet();
+    ShortLinkedOpenHashSet shorts = new ShortLinkedOpenHashSet();
+  }
+
+  static public void usesStack() {
+    /* todo */
+  }
+
+  static public void usesTreeSet() {
+    /* todo */
+  }
+
+  /* MAPS */
+
+  static public void usesOpenHashMap() {
     Byte2BooleanMap byte_to_boolean = new Byte2BooleanOpenHashMap();
     Byte2ByteMap byte_to_byte = new Byte2ByteOpenHashMap();
     Byte2CharMap byte_to_char = new Byte2CharOpenHashMap();
@@ -389,19 +424,5 @@ public class UseFastutilNegativeCases {
     Short2ObjectMap short_to_object = new Short2ObjectOpenHashMap<>();
     Short2ReferenceMap short_to_reference = new Short2ReferenceOpenHashMap<>();
     Short2ShortMap short_to_short = new Short2ShortOpenHashMap();
-  }
-
-  static public void usesJavaStack() {
-    /* Not sure how to instantiate fastutil stacks */
-    /*
-    BooleanStack booleans = new BooleanStack();
-    ByteStack bytes = new ByteStack();
-    CharStack chars = new CharStack();
-    DoubleStack doubles = new DoubleStack();
-    FloatStack floats = new FloatStack();
-    IntStack ints = new IntStack();
-    LongStack longs = new LongStack();
-    ShortStack shorts = new ShortStack();
-    */
   }
 }
