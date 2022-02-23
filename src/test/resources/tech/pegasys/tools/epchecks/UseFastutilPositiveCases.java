@@ -15,13 +15,20 @@
 
 package tech.pegasys.tools.epchecks;
 
-import com.google.common.base.Objects;
-import java.util.List;
+import static java.util.Map.entry;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+
+import com.google.common.base.Objects;
 
 public class UseFastutilPositiveCases {
 
@@ -30,11 +37,26 @@ public class UseFastutilPositiveCases {
 
   static public void usesJavaOf() {
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Set<Integer> ints = Set.of(1, 2, 3);
+    List<Integer> list_of_ints = List.of(1, 2, 3);
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Set<Integer> set_of_ints = Set.of(1, 2, 3);
     // BUG: Diagnostic contains: Use the fastutil equivalent
     Map<Integer, String> int_to_str = Map.of(1, "1", 2, "2", 3, "3");
     // BUG: Diagnostic contains: Use the fastutil equivalent
     Map<String, Integer> str_to_int = Map.of("1", 1, "2", 2, "3", 3);
+  }
+
+  static public void usesJavaOfEntries() {
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Map<Integer, String> int_to_str = Map.ofEntries(
+            entry(1, "1"),
+            entry(2, "2"),
+            entry(3, "3"));
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Map<String, Integer> str_to_int = Map.ofEntries(
+            entry("1", 1),
+            entry("2", 2),
+            entry("3", 3));
   }
 
   static public void usesJavaSet() {
@@ -75,7 +97,26 @@ public class UseFastutilPositiveCases {
     List<Short> shorts = new ArrayList<>();
   }
 
-  static public void usesJavamap() {
+  static public void usesJavaLinkedList() {
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Boolean> bools = new LinkedList<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Byte> bytes = new LinkedList<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Character> chars = new LinkedList<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Double> doubles = new LinkedList<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Float> floats = new LinkedList<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Integer> ints = new LinkedList<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Long> longs = new LinkedList<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    LinkedList<Short> shorts = new LinkedList<>();
+  }
+
+  static public void usesJavaMap() {
     // BUG: Diagnostic contains: Use the fastutil equivalent
     Map<Boolean, String> bool_to_str = new HashMap<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
@@ -108,6 +149,25 @@ public class UseFastutilPositiveCases {
     Map<Short, String> short_to_str = new HashMap<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
     Map<String, Short> str_to_short = new HashMap<>();
+  }
+
+  static public void usesJavaStack() {
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Boolean> bools = new ArrayDeque<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Byte> bytes = new ArrayDeque<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Character> chars = new ArrayDeque<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Double> doubles = new ArrayDeque<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Float> floats = new ArrayDeque<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Integer> ints = new ArrayDeque<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Long> longs = new ArrayDeque<>();
+    // BUG: Diagnostic contains: Use the fastutil equivalent
+    Deque<Short> shorts = new ArrayDeque<>();
   }
 
   static void createGenericList() {

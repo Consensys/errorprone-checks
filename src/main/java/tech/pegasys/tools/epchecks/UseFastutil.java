@@ -12,7 +12,7 @@
  */
 package tech.pegasys.tools.epchecks;
 
-import static com.google.errorprone.BugPattern.SeverityLevel.WARNING;
+import static com.google.errorprone.BugPattern.SeverityLevel.SUGGESTION;
 import static com.google.errorprone.matchers.Description.NO_MATCH;
 import static com.google.errorprone.matchers.Matchers.anyOf;
 import static com.google.errorprone.matchers.Matchers.staticMethod;
@@ -37,17 +37,21 @@ import com.sun.tools.javac.code.TypeTag;
 @BugPattern(
     name = "UseFastutil",
     summary = "Use the fastutil equivalent for better performance.",
-    severity = WARNING)
+    severity = SUGGESTION)
 public class UseFastutil extends BugChecker
     implements NewClassTreeMatcher, MethodInvocationTreeMatcher {
 
   private static final Matcher<ExpressionTree> NEW_LIST =
       anyOf(
           constructor().forClass("java.util.ArrayList"),
+          constructor().forClass("java.util.LinkedList"),
+          constructor().forClass("java.util.ArrayDeque"),
           constructor().forClass("java.util.HashSet"));
 
   private static final Matcher<ExpressionTree> NEW_MAP =
-      anyOf(constructor().forClass("java.util.HashMap"));
+      anyOf(
+          constructor().forClass("java.util.LinkedHashMap"),
+          constructor().forClass("java.util.HashMap"));
 
   private static final Matcher<MethodInvocationTree> LIST_OF =
       anyOf(
@@ -55,7 +59,9 @@ public class UseFastutil extends BugChecker
           staticMethod().onClass("java.util.List").named("of"));
 
   private static final Matcher<MethodInvocationTree> MAP_OF =
-      anyOf(staticMethod().onClass("java.util.Map").named("of"));
+      anyOf(
+          staticMethod().onClass("java.util.Map").named("of"),
+          staticMethod().onClass("java.util.Map").named("ofEntries"));
 
   @Override
   public Description matchNewClass(NewClassTree tree, VisitorState state) {
