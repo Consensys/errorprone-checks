@@ -1,5 +1,5 @@
 /*
- * Copyright ConsenSys AG.
+ * Copyright 2022 ConsenSys AG.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,9 +17,7 @@ package tech.pegasys.tools.epchecks;
 
 import static java.util.Map.entry;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -28,12 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import com.google.common.base.Objects;
-
 public class UseFastutilPositiveCases {
-
-  // BUG: Diagnostic contains: Use the fastutil equivalent
-  static final List<Boolean> _bools = new ArrayList<>();
 
   static public void usesJavaOf() {
     // BUG: Diagnostic contains: Use the fastutil equivalent
@@ -153,31 +146,20 @@ public class UseFastutilPositiveCases {
 
   static public void usesJavaStack() {
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Boolean> bools = new ArrayDeque<>();
+    Stack<Boolean> bools = new Stack<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Byte> bytes = new ArrayDeque<>();
+    Stack<Byte> bytes = new Stack<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Character> chars = new ArrayDeque<>();
+    Stack<Character> chars = new Stack<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Double> doubles = new ArrayDeque<>();
+    Stack<Double> doubles = new Stack<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Float> floats = new ArrayDeque<>();
+    Stack<Float> floats = new Stack<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Integer> ints = new ArrayDeque<>();
+    Stack<Integer> ints = new Stack<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Long> longs = new ArrayDeque<>();
+    Stack<Long> longs = new Stack<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
-    Deque<Short> shorts = new ArrayDeque<>();
-  }
-
-  static void createGenericList() {
-    Integer i = 0;
-    // This should be caught.
-    List<Integer> list = createListOf(i);
-  }
-  static <T> List<T> createListOf(T a) {
-    List<T> list = new ArrayList<>();
-    list.add(a);
-    return list;
+    Stack<Short> shorts = new Stack<>();
   }
 }

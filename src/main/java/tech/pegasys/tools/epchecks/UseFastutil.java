@@ -41,22 +41,30 @@ import com.sun.tools.javac.code.TypeTag;
 public class UseFastutil extends BugChecker
     implements NewClassTreeMatcher, MethodInvocationTreeMatcher {
 
+  // According to the docs: fastutil specializes the most useful HashSet,
+  // HashMap, LinkedHashSet, LinkedHashMap, TreeSet, TreeMap, IdentityHashMap,
+  // ArrayList and Stack classes to versions that accept a specific kind of key
+  // or value (e.g., integers).
   private static final Matcher<ExpressionTree> NEW_LIST =
       anyOf(
           constructor().forClass("java.util.ArrayList"),
+          constructor().forClass("java.util.HashSet"),
+          constructor().forClass("java.util.LinkedHashSet"),
           constructor().forClass("java.util.LinkedList"),
-          constructor().forClass("java.util.ArrayDeque"),
-          constructor().forClass("java.util.HashSet"));
+          constructor().forClass("java.util.Stack"),
+          constructor().forClass("java.util.TreeSet"));
 
   private static final Matcher<ExpressionTree> NEW_MAP =
       anyOf(
+          constructor().forClass("java.util.HashMap"),
+          constructor().forClass("java.util.IdentityHashMap"),
           constructor().forClass("java.util.LinkedHashMap"),
-          constructor().forClass("java.util.HashMap"));
+          constructor().forClass("java.util.TreeMap"));
 
   private static final Matcher<MethodInvocationTree> LIST_OF =
       anyOf(
-          staticMethod().onClass("java.util.Set").named("of"),
-          staticMethod().onClass("java.util.List").named("of"));
+          staticMethod().onClass("java.util.List").named("of"),
+          staticMethod().onClass("java.util.Set").named("of"));
 
   private static final Matcher<MethodInvocationTree> MAP_OF =
       anyOf(
