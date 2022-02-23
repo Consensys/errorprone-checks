@@ -63,7 +63,7 @@ public class UseFastutil extends BugChecker
           constructor().forClass("java.util.LinkedHashMap"),
           constructor().forClass("java.util.TreeMap"));
 
-  private static final Matcher<MethodInvocationTree> LIST_OF =
+  private static final Matcher<MethodInvocationTree> ITERABLE_OF =
       anyOf(
           staticMethod().onClass("java.util.List").named("of"),
           staticMethod().onClass("java.util.Set").named("of"));
@@ -76,7 +76,7 @@ public class UseFastutil extends BugChecker
   @Override
   public Description matchNewClass(NewClassTree tree, VisitorState state) {
     if (NEW_ITERABLE.matches(tree, state)) {
-      return checkList(tree, state);
+      return checkIterable(tree, state);
     } else if (NEW_MAP.matches(tree, state)) {
       return checkMap(tree, state);
     }
@@ -85,15 +85,15 @@ public class UseFastutil extends BugChecker
 
   @Override
   public Description matchMethodInvocation(MethodInvocationTree tree, VisitorState state) {
-    if (LIST_OF.matches(tree, state)) {
-      return checkList(tree, state);
+    if (ITERABLE_OF.matches(tree, state)) {
+      return checkIterable(tree, state);
     } else if (MAP_OF.matches(tree, state)) {
       return checkMap(tree, state);
     }
     return NO_MATCH;
   }
 
-  private Description checkList(ExpressionTree tree, VisitorState state) {
+  private Description checkIterable(ExpressionTree tree, VisitorState state) {
     List<Type> argumentTypes = ASTHelpers.getResultType(tree).getTypeArguments();
     if (argumentTypes.size() == 1) {
       if (isPrimitive(argumentTypes.get(0), state)) {
