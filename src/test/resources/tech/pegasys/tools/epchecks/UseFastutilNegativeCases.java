@@ -334,10 +334,6 @@ public class UseFastutilNegativeCases {
     ShortLinkedOpenHashSet shorts = new ShortLinkedOpenHashSet();
   }
 
-  static public void usesStack() {
-    /* todo */
-  }
-
   static public void usesTreeSet() {
     // TreeSet uses RB trees: https://stackoverflow.com/a/23277366
     ByteRBTreeSet bytes = new ByteRBTreeSet();

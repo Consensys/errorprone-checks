@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 public class UseFastutilPositiveCases {
@@ -97,25 +96,6 @@ public class UseFastutilPositiveCases {
     LinkedHashSet<Long> longs = new LinkedHashSet<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
     LinkedHashSet<Short> shorts = new LinkedHashSet<>();
-  }
-
-  static public void usesStack() {
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Boolean> bools = new Stack<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Byte> bytes = new Stack<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Character> chars = new Stack<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Double> doubles = new Stack<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Float> floats = new Stack<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Integer> ints = new Stack<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Long> longs = new Stack<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Stack<Short> shorts = new Stack<>();
   }
 
   static public void usesTreeSet() {

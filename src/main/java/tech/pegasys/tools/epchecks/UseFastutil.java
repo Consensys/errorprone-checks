@@ -41,22 +41,25 @@ import com.sun.tools.javac.code.TypeTag;
 public class UseFastutil extends BugChecker
     implements NewClassTreeMatcher, MethodInvocationTreeMatcher {
 
-  // According to the docs: fastutil specializes the most useful HashSet,
-  // HashMap, LinkedHashSet, LinkedHashMap, TreeSet, TreeMap, IdentityHashMap,
-  // ArrayList and Stack classes to versions that accept a specific kind of key
-  // or value (e.g., integers).
-  private static final Matcher<ExpressionTree> NEW_LIST =
+  // According to [the docs](https://fastutil.di.unimi.it/docs/index.html):
+  // fastutil specializes the most useful HashSet, HashMap, LinkedHashSet,
+  // LinkedHashMap, TreeSet, TreeMap, IdentityHashMap, ArrayList and Stack
+  // classes to versions that accept a specific kind of key or value (e.g.,
+  // integers).
+  //
+  // Note: I cannot figure out how to instantiate fastutil Stack classes and I
+  // do not see IdentifyHashMap in fastutil, so I have removed those from this
+  // check.
+  private static final Matcher<ExpressionTree> NEW_ITERABLE =
       anyOf(
           constructor().forClass("java.util.ArrayList"),
           constructor().forClass("java.util.HashSet"),
           constructor().forClass("java.util.LinkedHashSet"),
-          constructor().forClass("java.util.Stack"),
           constructor().forClass("java.util.TreeSet"));
 
   private static final Matcher<ExpressionTree> NEW_MAP =
       anyOf(
           constructor().forClass("java.util.HashMap"),
-          constructor().forClass("java.util.IdentityHashMap"),
           constructor().forClass("java.util.LinkedHashMap"),
           constructor().forClass("java.util.TreeMap"));
 
@@ -72,7 +75,7 @@ public class UseFastutil extends BugChecker
 
   @Override
   public Description matchNewClass(NewClassTree tree, VisitorState state) {
-    if (NEW_LIST.matches(tree, state)) {
+    if (NEW_ITERABLE.matches(tree, state)) {
       return checkList(tree, state);
     } else if (NEW_MAP.matches(tree, state)) {
       return checkMap(tree, state);
