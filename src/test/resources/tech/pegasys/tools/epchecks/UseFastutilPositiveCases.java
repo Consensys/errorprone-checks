@@ -20,7 +20,6 @@ import static java.util.Map.entry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -186,40 +185,5 @@ public class UseFastutilPositiveCases {
     Map<Short, String> short_to_str = new HashMap<>();
     // BUG: Diagnostic contains: Use the fastutil equivalent
     Map<String, Short> str_to_short = new HashMap<>();
-  }
-
-  static public void usesIdentityHashMap() {
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Boolean, String> bool_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Boolean> str_to_bool = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Byte, String> byte_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Byte> str_to_byte = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Character, String> char_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Character> str_to_char = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Double, String> double_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Double> str_to_double = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Float, String> float_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Float> str_to_float = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Integer, String> int_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Integer> str_to_int = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Long, String> long_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Long> str_to_long = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<Short, String> short_to_str = new IdentityHashMap<>();
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    IdentityHashMap<String, Short> str_to_short = new IdentityHashMap<>();
   }
 }

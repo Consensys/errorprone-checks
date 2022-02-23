@@ -65,7 +65,7 @@ import it.unimi.dsi.fastutil.ints.IntStack;
 import it.unimi.dsi.fastutil.longs.LongStack;
 import it.unimi.dsi.fastutil.shorts.ShortStack;
 
-// There are no BooleanLinkedOpenHashSet type.
+// There is no BooleanLinkedOpenHashSet type.
 import it.unimi.dsi.fastutil.bytes.ByteLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.chars.CharLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.doubles.DoubleLinkedOpenHashSet;
@@ -75,6 +75,17 @@ import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.shorts.ShortLinkedOpenHashSet;
+
+// There is no BooleanRBTreeSet
+import it.unimi.dsi.fastutil.bytes.ByteRBTreeSet;
+import it.unimi.dsi.fastutil.chars.CharRBTreeSet;
+import it.unimi.dsi.fastutil.doubles.DoubleRBTreeSet;
+import it.unimi.dsi.fastutil.floats.FloatRBTreeSet;
+import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
+import it.unimi.dsi.fastutil.longs.LongRBTreeSet;
+import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
+// There is no ReferenceRBTreeSet
+import it.unimi.dsi.fastutil.shorts.ShortRBTreeSet;
 
 // There are no Boolean2<>Map types.
 import it.unimi.dsi.fastutil.bytes.Byte2BooleanMap;
@@ -328,7 +339,15 @@ public class UseFastutilNegativeCases {
   }
 
   static public void usesTreeSet() {
-    /* todo */
+    // TreeSet uses RB trees: https://stackoverflow.com/a/23277366
+    ByteRBTreeSet bytes = new ByteRBTreeSet();
+    CharRBTreeSet chars = new CharRBTreeSet();
+    DoubleRBTreeSet doubles = new DoubleRBTreeSet();
+    FloatRBTreeSet floats = new FloatRBTreeSet();
+    IntRBTreeSet ints = new IntRBTreeSet();
+    LongRBTreeSet longs = new LongRBTreeSet();
+    ObjectRBTreeSet objects = new ObjectRBTreeSet();
+    ShortRBTreeSet shorts = new ShortRBTreeSet();
   }
 
   /* MAPS */
