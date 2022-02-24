@@ -14,14 +14,43 @@
  */
 package tech.pegasys.tools.epchecks;
 
+import it.unimi.dsi.fastutil.bytes.Byte2CharLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.bytes.Byte2CharMap;
+import it.unimi.dsi.fastutil.bytes.Byte2CharSortedMap;
+import it.unimi.dsi.fastutil.doubles.Double2ByteMap;
+import it.unimi.dsi.fastutil.doubles.Double2ByteRBTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 public class DoNotUseEntrySetWithFastutilNegativeCases {
 
-  public void useTypeSpecificEntrySet() {
-    Int2ObjectMap<String> map_a = new Int2ObjectOpenHashMap<>();
-    for (Int2ObjectMap.Entry<String> m : map_a.int2ObjectEntrySet()) {
+  public void typeSpecificInt2ObjectMapForEach() {
+    Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
+    for (Int2ObjectMap.Entry<String> m : map.int2ObjectEntrySet()) {
+      System.out.println(m.getValue());
+    }
+  }
+
+  public void typeSpecificInt2ObjectMapIterator() {
+    Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
+    ObjectIterator<Int2ObjectMap.Entry<String>> iterator = map.int2ObjectEntrySet().iterator();
+    while (iterator.hasNext()) {
+      Int2ObjectMap.Entry<String> entry = iterator.next();
+      System.out.println(entry.getKey() + ":" + entry.getValue());
+    }
+  }
+
+  public void typeSpecificByte2CharSortedMap() {
+    Byte2CharSortedMap map = new Byte2CharLinkedOpenHashMap();
+    for (Byte2CharMap.Entry m : map.byte2CharEntrySet()) {
+      System.out.println(m.getValue());
+    }
+  }
+
+  public void typeSpecificDouble2ByteRBTreeMap() {
+    Double2ByteRBTreeMap map = new Double2ByteRBTreeMap();
+    for (Double2ByteMap.Entry m : map.double2ByteEntrySet()) {
       System.out.println(m.getValue());
     }
   }

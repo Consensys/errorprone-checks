@@ -17,26 +17,45 @@ package tech.pegasys.tools.epchecks;
 import java.util.Map;
 import java.util.Iterator;
 
+import it.unimi.dsi.fastutil.bytes.Byte2CharLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.bytes.Byte2CharSortedMap;
+import it.unimi.dsi.fastutil.doubles.Double2ByteRBTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public class DoNotUseEntrySetWithFastutilPositiveCases {
 
-  public void forEachInEntrySet() {
+  public void int2ObjectMapForEach() {
     Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
-    // BUG: Diagnostic contains: Use type-specific entrySet method instead
+    // BUG: Diagnostic contains: int2ObjectEntrySet
     for (Map.Entry<Integer, String> m : map.entrySet()) {
       System.out.println(m.getValue());
     }
   }
 
-  public void iteratorOverEntrySet() {
+  public void int2ObjectMapIterator() {
     Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
-    // BUG: Diagnostic contains: Use type-specific entrySet method instead
+    // BUG: Diagnostic contains: int2ObjectEntrySet
     Iterator<Map.Entry<Integer, String>> iterator = map.entrySet().iterator();
     while (iterator.hasNext()) {
       Map.Entry<Integer, String> entry = iterator.next();
       System.out.println(entry.getKey() + ":" + entry.getValue());
+    }
+  }
+
+  public void byte2CharSortedMap() {
+    Byte2CharSortedMap map = new Byte2CharLinkedOpenHashMap();
+    // BUG: Diagnostic contains: byte2CharEntrySet
+    for (Map.Entry<Byte, Character> m : map.entrySet()) {
+      System.out.println(m.getValue());
+    }
+  }
+
+  public void double2ByteRBTreeMap() {
+    Double2ByteRBTreeMap map = new Double2ByteRBTreeMap();
+    // BUG: Diagnostic contains: double2ByteEntrySet
+    for (Map.Entry<Double, Byte> m : map.entrySet()) {
+      System.out.println(m.getValue());
     }
   }
 }
