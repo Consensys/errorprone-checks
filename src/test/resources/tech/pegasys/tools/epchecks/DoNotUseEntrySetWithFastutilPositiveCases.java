@@ -15,17 +15,28 @@
 package tech.pegasys.tools.epchecks;
 
 import java.util.Map;
+import java.util.Iterator;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public class DoNotUseEntrySetWithFastutilPositiveCases {
 
-  public void useDeprecatedEntrySet() {
+  public void forEachInEntrySet() {
     Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
     // BUG: Diagnostic contains: Use type-specific entrySet method instead
     for (Map.Entry<Integer, String> m : map.entrySet()) {
       System.out.println(m.getValue());
+    }
+  }
+
+  public void iteratorOverEntrySet() {
+    Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
+    // BUG: Diagnostic contains: Use type-specific entrySet method instead
+    Iterator<Map.Entry<Integer, String>> iterator = map.entrySet().iterator();
+    while (iterator.hasNext()) {
+      Map.Entry<Integer, String> entry = iterator.next();
+      System.out.println(entry.getKey() + ":" + entry.getValue());
     }
   }
 }

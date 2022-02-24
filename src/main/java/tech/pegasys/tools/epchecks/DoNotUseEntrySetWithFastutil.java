@@ -15,14 +15,19 @@ package tech.pegasys.tools.epchecks;
 import static com.google.errorprone.BugPattern.SeverityLevel.WARNING;
 import static com.google.errorprone.matchers.Matchers.instanceMethod;
 
+import java.util.Map;
+
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
 import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.bugpatterns.BugChecker.MethodInvocationTreeMatcher;
+import com.google.errorprone.fixes.SuggestedFixes;
 import com.google.errorprone.matchers.Description;
 import com.google.errorprone.matchers.Matcher;
+import com.google.errorprone.util.ASTHelpers;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.tools.javac.code.Type;
 
 @BugPattern(
     name = "DoNotUseEntrySetWithFastutil",
@@ -36,13 +41,43 @@ public class DoNotUseEntrySetWithFastutil extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_ENTRYSET =
       instanceMethod().onDescendantOfAny(FASTUTIL_FUNCTION).named("entrySet");
 
+  private static final Map<String, String> typeNames =
+      Map.of(
+          "java.lang.Boolean", "Boolean",
+          "java.lang.Byte", "Byte",
+          "java.lang.Character", "Char",
+          "java.lang.Double", "Double",
+          "java.lang.Float", "Float",
+          "java.lang.Integer", "Int",
+          "java.lang.Long", "Long",
+          "java.lang.Reference", "Reference",
+          "java.lang.Short", "Short");
+
   @Override
   public Description matchMethodInvocation(MethodInvocationTree tree, VisitorState state) {
     if (DEPRECATED_ENTRYSET.matches(tree, state)) {
       return buildDescription(tree)
           .setMessage("Use type-specific entrySet method instead.")
+          .addFix(
+              SuggestedFixes.renameMethodInvocation(
+                  tree, getTypeSpecificEntrySetFuncName(tree, state), state))
+          .setLinkUrl("https://github.com/ConsenSys/errorprone-checks")
           .build();
     }
     return Description.NO_MATCH;
+  }
+
+  private static String getTypeSpecificEntrySetFuncName(
+      MethodInvocationTree tree, VisitorState state) {
+    Type objectSet = ASTHelpers.getType(tree);
+    Type mapEntry = objectSet.allparams().get(0);
+    String left = mapEntry.allparams().get(0).toString();
+    String right = mapEntry.allparams().get(1).toString();
+    String newFuncName =
+        typeNames.getOrDefault(left, "Object").toLowerCase()
+            + "2"
+            + typeNames.getOrDefault(right, "Object")
+            + "EntrySet";
+    return newFuncName;
   }
 }
