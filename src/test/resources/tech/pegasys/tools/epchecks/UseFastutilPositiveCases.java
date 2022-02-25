@@ -163,4 +163,9 @@ public class UseFastutilPositiveCases {
     // BUG: Diagnostic contains: Int2ObjectMap<Map<String, String>> int_to_map = new Int2ObjectOpenHashMap<Map<String, String>>()
     Map<Integer, Map<String, String>> int_to_map = new HashMap<>();
   }
+
+  static public void usesComplexMapNoSpaces() {
+    // BUG: Diagnostic contains: Int2ObjectMap<Map<String, String>> int_to_map = new Int2ObjectOpenHashMap<Map<String, String>>()
+    Map<Integer,Map<String,String>> int_to_map=new HashMap<>();
+  }
 }
