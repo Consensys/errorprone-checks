@@ -23,7 +23,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
-public class DoNotUseEntrySetWithFastutilNegativeCases {
+public class DoNotUseDeprecatedFastutilMethodNegativeCases {
 
   public void typeSpecificInt2ObjectMapForEach() {
     Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();

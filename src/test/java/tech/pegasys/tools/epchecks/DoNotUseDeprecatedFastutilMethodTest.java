@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 ConsenSys AG.
+ * Copyright 2022 ConsenSys AG.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,23 +16,23 @@ import com.google.errorprone.CompilationTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class DoNotUseEntrySetWithFastutilTest {
+public class DoNotUseDeprecatedFastutilMethodTest {
 
   private CompilationTestHelper compilationHelper;
 
   @BeforeEach
   public void setup() {
     compilationHelper =
-        CompilationTestHelper.newInstance(DoNotUseEntrySetWithFastutil.class, getClass());
+        CompilationTestHelper.newInstance(DoNotUseDeprecatedFastutilMethod.class, getClass());
   }
 
   @Test
   public void doNotReturnNullPositiveCases() {
-    compilationHelper.addSourceFile("DoNotUseEntrySetWithFastutilPositiveCases.java").doTest();
+    compilationHelper.addSourceFile("DoNotUseDeprecatedFastutilMethodPositiveCases.java").doTest();
   }
 
   @Test
   public void doNotReturnNullNegativeCases() {
-    compilationHelper.addSourceFile("DoNotUseEntrySetWithFastutilNegativeCases.java").doTest();
+    compilationHelper.addSourceFile("DoNotUseDeprecatedFastutilMethodNegativeCases.java").doTest();
   }
 }

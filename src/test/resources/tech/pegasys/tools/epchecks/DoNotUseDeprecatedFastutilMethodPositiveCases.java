@@ -19,11 +19,13 @@ import java.util.Iterator;
 
 import it.unimi.dsi.fastutil.bytes.Byte2CharLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.bytes.Byte2CharSortedMap;
+import it.unimi.dsi.fastutil.chars.CharList;
 import it.unimi.dsi.fastutil.doubles.Double2ByteRBTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntList;
 
-public class DoNotUseEntrySetWithFastutilPositiveCases {
+public class DoNotUseDeprecatedFastutilMethodPositiveCases {
 
   public void int2ObjectMapForEach() {
     Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
@@ -57,5 +59,31 @@ public class DoNotUseEntrySetWithFastutilPositiveCases {
     for (Map.Entry<Double, Byte> m : map.entrySet()) {
       System.out.println(m.getValue());
     }
+  }
+
+  public void useDeprecatedIntMethods() {
+    IntList int_list = IntList.of(1, 2, 3);
+
+    // BUG: Diagnostic contains: Use type-specific method instead
+    int_list.contains(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific method instead
+    int_list.indexOf(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific method instead
+    int_list.add(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific method instead
+    int_list.add(2, Integer.valueOf(1));
+  }
+
+  public void useDeprecatedCharMethods() {
+    CharList char_list = CharList.of('a', 'b', 'c');
+
+    // BUG: Diagnostic contains: Use type-specific method instead
+    char_list.contains(Character.valueOf('a'));
+    // BUG: Diagnostic contains: Use type-specific method instead
+    char_list.indexOf(Character.valueOf('a'));
+    // BUG: Diagnostic contains: Use type-specific method instead
+    char_list.add(Character.valueOf('a'));
+    // BUG: Diagnostic contains: Use type-specific method instead
+    char_list.add(2, Character.valueOf('a'));
   }
 }
