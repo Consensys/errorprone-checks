@@ -19,18 +19,22 @@ import static com.google.errorprone.matchers.Matchers.staticMethod;
 import static com.google.errorprone.matchers.method.MethodMatchers.constructor;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
 import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.bugpatterns.BugChecker.MethodInvocationTreeMatcher;
 import com.google.errorprone.bugpatterns.BugChecker.NewClassTreeMatcher;
+import com.google.errorprone.fixes.SuggestedFix;
 import com.google.errorprone.matchers.Description;
 import com.google.errorprone.matchers.Matcher;
 import com.google.errorprone.util.ASTHelpers;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.TypeTag;
 
@@ -68,10 +72,28 @@ public class UseFastutil extends BugChecker
           staticMethod().onClass("java.util.List").named("of"),
           staticMethod().onClass("java.util.Set").named("of"));
 
-  private static final Matcher<MethodInvocationTree> MAP_OF =
-      anyOf(
-          staticMethod().onClass("java.util.Map").named("of"),
-          staticMethod().onClass("java.util.Map").named("ofEntries"));
+  private static final Map<String, String> JAVA_TO_FASTUTIL =
+      Map.of(
+          "ArrayList", "ArrayList",
+          "HashMap", "OpenHashMap",
+          "HashSet", "OpenHashSet",
+          "LinkedHashSet", "LinkedOpenHashSet",
+          "List", "List",
+          "Map", "Map",
+          "Set", "Set",
+          "TreeSet", "RBTreeSet");
+
+  private static final Map<String, String> TYPE_ABBR =
+      Map.of(
+          "java.lang.Boolean", "Boolean",
+          "java.lang.Byte", "Byte",
+          "java.lang.Character", "Char",
+          "java.lang.Double", "Double",
+          "java.lang.Float", "Float",
+          "java.lang.Integer", "Int",
+          "java.lang.Long", "Long",
+          "java.lang.Reference", "Reference",
+          "java.lang.Short", "Short");
 
   @Override
   public Description matchNewClass(NewClassTree tree, VisitorState state) {
@@ -87,8 +109,6 @@ public class UseFastutil extends BugChecker
   public Description matchMethodInvocation(MethodInvocationTree tree, VisitorState state) {
     if (ITERABLE_OF.matches(tree, state)) {
       return checkIterable(tree, state);
-    } else if (MAP_OF.matches(tree, state)) {
-      return checkMap(tree, state);
     }
     return NO_MATCH;
   }
@@ -97,7 +117,7 @@ public class UseFastutil extends BugChecker
     List<Type> argumentTypes = ASTHelpers.getResultType(tree).getTypeArguments();
     if (argumentTypes.size() == 1) {
       if (isPrimitive(argumentTypes.get(0), state)) {
-        return describeMatch(tree);
+        return getDescriptionWithFix(tree, state);
       }
     }
     return NO_MATCH;
@@ -108,7 +128,7 @@ public class UseFastutil extends BugChecker
     if (argumentTypes.size() == 2) {
       for (int i = 0; i < 2; i++) {
         if (isPrimitive(argumentTypes.get(i), state)) {
-          return describeMatch(tree);
+          return getDescriptionWithFix(tree, state);
         }
       }
     }
@@ -118,5 +138,52 @@ public class UseFastutil extends BugChecker
   private boolean isPrimitive(Type type, VisitorState state) {
     Type unboxedType = state.getTypes().unboxedType(type);
     return unboxedType != null && unboxedType.getTag() != TypeTag.NONE;
+  }
+
+  private Description getDescriptionWithFix(ExpressionTree tree, VisitorState state) {
+    VariableTree node = (VariableTree) state.getPath().getParentPath().getLeaf();
+    String update = node.toString();
+
+    // Update the left side of the assigment.
+    String left = node.getType().toString();
+    update = update.replace(left, getUpdate(noArrowBrackets(left), tree));
+
+    // Update the right side of the assignment.
+    if (tree.getKind() == Tree.Kind.NEW_CLASS) {
+      NewClassTree newClassNode = (NewClassTree) tree;
+      String right = newClassNode.getIdentifier().toString();
+      update = update.replace(right, getUpdate(noArrowBrackets(right), tree));
+    } else if (tree.getKind() == Tree.Kind.METHOD_INVOCATION) {
+      MethodInvocationTree methodInvocationNode = (MethodInvocationTree) tree;
+      String classAndFunc = methodInvocationNode.getMethodSelect().toString();
+      String className = classAndFunc.substring(0, classAndFunc.indexOf("."));
+      update = update.replace(classAndFunc, getTypeSpecificClassName(tree) + classAndFunc);
+    }
+
+    return buildDescription(node)
+        .addFix(SuggestedFix.builder().replace(node, update).build())
+        .setLinkUrl("https://github.com/ConsenSys/errorprone-checks")
+        .build();
+  }
+
+  private static String noArrowBrackets(String classWithBrackets) {
+    return classWithBrackets.substring(0, classWithBrackets.indexOf("<"));
+  }
+
+  private static String getUpdate(String className, Tree tree) {
+    return getTypeSpecificClassName(tree) + JAVA_TO_FASTUTIL.get(className);
+  }
+
+  private static String getTypeSpecificClassName(Tree tree) {
+    Type objectSet = ASTHelpers.getType(tree);
+    if (objectSet.allparams().size() == 1) {
+      String left = objectSet.allparams().get(0).toString();
+      return TYPE_ABBR.getOrDefault(left, "Object");
+    } else if (objectSet.allparams().size() == 2) {
+      String left = objectSet.allparams().get(0).toString();
+      String right = objectSet.allparams().get(1).toString();
+      return TYPE_ABBR.getOrDefault(left, "Object") + "2" + TYPE_ABBR.getOrDefault(right, "Object");
+    }
+    return "";
   }
 }

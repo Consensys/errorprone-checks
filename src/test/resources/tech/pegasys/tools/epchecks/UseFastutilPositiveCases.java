@@ -35,10 +35,6 @@ public class UseFastutilPositiveCases {
     List<Integer> list_of_ints = List.of(1, 2, 3);
     // BUG: Diagnostic contains: Use the fastutil equivalent
     Set<Integer> set_of_ints = Set.of(1, 2, 3);
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Map<Integer, String> int_to_str = Map.of(1, "1", 2, "2", 3, "3");
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Map<String, Integer> str_to_int = Map.of("1", 1, "2", 2, "3", 3);
   }
 
   static public void usesArrayList() {
@@ -118,19 +114,6 @@ public class UseFastutilPositiveCases {
   }
 
   /* MAPS */
-
-  static public void usesOfEntries() {
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Map<Integer, String> int_to_str = Map.ofEntries(
-            entry(1, "1"),
-            entry(2, "2"),
-            entry(3, "3"));
-    // BUG: Diagnostic contains: Use the fastutil equivalent
-    Map<String, Integer> str_to_int = Map.ofEntries(
-            entry("1", 1),
-            entry("2", 2),
-            entry("3", 3));
-  }
 
   static public void usesMap() {
     // BUG: Diagnostic contains: Use the fastutil equivalent
