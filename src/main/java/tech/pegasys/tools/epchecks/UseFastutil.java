@@ -142,24 +142,27 @@ public class UseFastutil extends BugChecker
   }
 
   private Description getDescriptionWithFix(ExpressionTree tree, VisitorState state) {
-    VariableTree node = (VariableTree) state.getPath().getParentPath().getLeaf();
+    Tree node = state.getPath().getParentPath().getLeaf();
     String update = node.toString();
 
     // Update the left side of the assigment.
-    String left = node.getType().toString();
-    update = update.replace(left, getUpdate(tree, state, noArrowBrackets(left)));
+    if (node.getKind() == Tree.Kind.VARIABLE) {
+      VariableTree varTreeNode = (VariableTree) node;
+      String left = varTreeNode.getType().toString();
+      update = update.replace(left, toFastutil(tree, state, noArrowBrackets(left)));
+    }
 
     // Update the right side of the assignment.
     if (tree.getKind() == Tree.Kind.NEW_CLASS) {
       NewClassTree newClassNode = (NewClassTree) tree;
       String right = newClassNode.getIdentifier().toString();
-      update = update.replace(right, getUpdate(tree, state, noArrowBrackets(right)));
+      update = update.replace(right, toFastutil(tree, state, noArrowBrackets(right)));
     } else if (tree.getKind() == Tree.Kind.METHOD_INVOCATION) {
       MethodInvocationTree methodInvocationNode = (MethodInvocationTree) tree;
       String classAndFunc = methodInvocationNode.getMethodSelect().toString();
       String className = classAndFunc.substring(0, classAndFunc.indexOf("."));
-      update =
-          update.replace(classAndFunc, getTypeSpecificClassName(tree, state, "") + classAndFunc);
+      String fastutilClassName = getTypeSpecificClassName(tree, state, "") + classAndFunc;
+      update = update.replace(classAndFunc, fastutilClassName);
     }
 
     return buildDescription(node)
@@ -168,33 +171,32 @@ public class UseFastutil extends BugChecker
         .build();
   }
 
-  private static String noArrowBrackets(String classWithBrackets) {
+  private String noArrowBrackets(String classWithBrackets) {
     return classWithBrackets.substring(0, classWithBrackets.indexOf("<"));
   }
 
-  private static String getUpdate(Tree tree, VisitorState state, String className) {
+  private String toFastutil(Tree tree, VisitorState state, String className) {
     return getTypeSpecificClassName(tree, state, JAVA_TO_FASTUTIL.get(className));
   }
 
-  private static String getTypeSpecificClassName(Tree tree, VisitorState state, String className) {
+  private String getTypeSpecificClassName(Tree tree, VisitorState state, String className) {
     Type objectSet = ASTHelpers.getType(tree);
     if (objectSet.allparams().size() == 1) {
-      String left = objectSet.allparams().get(0).toString();
-      return TYPE_ABBR.getOrDefault(left, "Object") + className;
+      Type left = objectSet.allparams().get(0);
+      return TYPE_ABBR.getOrDefault(left.toString(), "Object") + className;
     } else if (objectSet.allparams().size() == 2) {
-      String left = objectSet.allparams().get(0).toString();
-      String right = objectSet.allparams().get(1).toString();
+      Type left = objectSet.allparams().get(0);
+      Type right = objectSet.allparams().get(1);
       String a2b =
-          TYPE_ABBR.getOrDefault(left, "Object")
+          TYPE_ABBR.getOrDefault(left.toString(), "Object")
               + "2"
-              + TYPE_ABBR.getOrDefault(right, "Object")
+              + TYPE_ABBR.getOrDefault(right.toString(), "Object")
               + className;
       if (!className.isBlank()) {
-        if (!TYPE_ABBR.containsKey(left)) {
-          a2b = a2b + "<" + SuggestedFixes.prettyType(objectSet.allparams().get(0), state) + ">";
-        }
-        if (!TYPE_ABBR.containsKey(right)) {
-          a2b = a2b + "<" + SuggestedFixes.prettyType(objectSet.allparams().get(1), state) + ">";
+        if (!TYPE_ABBR.containsKey(left.toString())) {
+          a2b = a2b + "<" + SuggestedFixes.prettyType(left, state) + ">";
+        } else if (!TYPE_ABBR.containsKey(right.toString())) {
+          a2b = a2b + "<" + SuggestedFixes.prettyType(right, state) + ">";
         }
       }
       return a2b;

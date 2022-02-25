@@ -37,6 +37,16 @@ public class UseFastutilPositiveCases {
     Set<Integer> set_of_ints = Set.of(1, 2, 3);
   }
 
+  static public List<Integer> returnNewListOf() {
+    // BUG: Diagnostic contains: return IntList.of(1, 2, 3)
+    return List.of(1, 2, 3);
+  }
+
+  static public Set<Integer> returnNewSetOf() {
+    // BUG: Diagnostic contains: return IntSet.of(1, 2, 3)
+    return Set.of(1, 2, 3);
+  }
+
   static public void usesArrayList() {
     // BUG: Diagnostic contains: BooleanList bools = new BooleanArrayList()
     List<Boolean> bools = new ArrayList<>();
@@ -54,6 +64,11 @@ public class UseFastutilPositiveCases {
     List<Long> longs = new ArrayList<>();
     // BUG: Diagnostic contains: ShortList shorts = new ShortArrayList()
     List<Short> shorts = new ArrayList<>();
+  }
+
+  static public List<Integer> returnNewArrayList() {
+    // BUG: Diagnostic contains: return new IntArrayList()
+    return new ArrayList<>();
   }
 
   static public void usesHashSet() {
@@ -167,5 +182,10 @@ public class UseFastutilPositiveCases {
   static public void usesComplexMapNoSpaces() {
     // BUG: Diagnostic contains: Int2ObjectMap<Map<String, String>> int_to_map = new Int2ObjectOpenHashMap<Map<String, String>>()
     Map<Integer,Map<String,String>> int_to_map=new HashMap<>();
+  }
+
+  static public Map<Integer, String> returnNewMap() {
+    // BUG: Diagnostic contains: return new Int2ObjectOpenHashMap<String>()
+    return new HashMap<Integer, String>();
   }
 }
