@@ -27,6 +27,7 @@ import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.bugpatterns.BugChecker.MethodInvocationTreeMatcher;
 import com.google.errorprone.bugpatterns.BugChecker.NewClassTreeMatcher;
 import com.google.errorprone.fixes.SuggestedFix;
+import com.google.errorprone.fixes.SuggestedFixes;
 import com.google.errorprone.matchers.Description;
 import com.google.errorprone.matchers.Matcher;
 import com.google.errorprone.util.ASTHelpers;
@@ -146,18 +147,19 @@ public class UseFastutil extends BugChecker
 
     // Update the left side of the assigment.
     String left = node.getType().toString();
-    update = update.replace(left, getUpdate(noArrowBrackets(left), tree));
+    update = update.replace(left, getUpdate(tree, state, noArrowBrackets(left)));
 
     // Update the right side of the assignment.
     if (tree.getKind() == Tree.Kind.NEW_CLASS) {
       NewClassTree newClassNode = (NewClassTree) tree;
       String right = newClassNode.getIdentifier().toString();
-      update = update.replace(right, getUpdate(noArrowBrackets(right), tree));
+      update = update.replace(right, getUpdate(tree, state, noArrowBrackets(right)));
     } else if (tree.getKind() == Tree.Kind.METHOD_INVOCATION) {
       MethodInvocationTree methodInvocationNode = (MethodInvocationTree) tree;
       String classAndFunc = methodInvocationNode.getMethodSelect().toString();
       String className = classAndFunc.substring(0, classAndFunc.indexOf("."));
-      update = update.replace(classAndFunc, getTypeSpecificClassName(tree) + classAndFunc);
+      update =
+          update.replace(classAndFunc, getTypeSpecificClassName(tree, state, "") + classAndFunc);
     }
 
     return buildDescription(node)
@@ -170,19 +172,32 @@ public class UseFastutil extends BugChecker
     return classWithBrackets.substring(0, classWithBrackets.indexOf("<"));
   }
 
-  private static String getUpdate(String className, Tree tree) {
-    return getTypeSpecificClassName(tree) + JAVA_TO_FASTUTIL.get(className);
+  private static String getUpdate(Tree tree, VisitorState state, String className) {
+    return getTypeSpecificClassName(tree, state, JAVA_TO_FASTUTIL.get(className));
   }
 
-  private static String getTypeSpecificClassName(Tree tree) {
+  private static String getTypeSpecificClassName(Tree tree, VisitorState state, String className) {
     Type objectSet = ASTHelpers.getType(tree);
     if (objectSet.allparams().size() == 1) {
       String left = objectSet.allparams().get(0).toString();
-      return TYPE_ABBR.getOrDefault(left, "Object");
+      return TYPE_ABBR.getOrDefault(left, "Object") + className;
     } else if (objectSet.allparams().size() == 2) {
       String left = objectSet.allparams().get(0).toString();
       String right = objectSet.allparams().get(1).toString();
-      return TYPE_ABBR.getOrDefault(left, "Object") + "2" + TYPE_ABBR.getOrDefault(right, "Object");
+      String a2b =
+          TYPE_ABBR.getOrDefault(left, "Object")
+              + "2"
+              + TYPE_ABBR.getOrDefault(right, "Object")
+              + className;
+      if (!className.isBlank()) {
+        if (!TYPE_ABBR.containsKey(left)) {
+          a2b = a2b + "<" + SuggestedFixes.prettyType(objectSet.allparams().get(0), state) + ">";
+        }
+        if (!TYPE_ABBR.containsKey(right)) {
+          a2b = a2b + "<" + SuggestedFixes.prettyType(objectSet.allparams().get(1), state) + ">";
+        }
+      }
+      return a2b;
     }
     return "";
   }
