@@ -42,7 +42,8 @@ import com.sun.tools.javac.code.TypeTag;
 @BugPattern(
     name = "UseFastutil",
     summary = "Use the fastutil equivalent for better performance.",
-    severity = SUGGESTION)
+    severity = SUGGESTION,
+    linkType = BugPattern.LinkType.NONE)
 public class UseFastutil extends BugChecker
     implements NewClassTreeMatcher, MethodInvocationTreeMatcher {
 
@@ -167,7 +168,6 @@ public class UseFastutil extends BugChecker
 
     return buildDescription(node)
         .addFix(SuggestedFix.builder().replace(node, update).build())
-        .setLinkUrl("https://github.com/ConsenSys/errorprone-checks")
         .build();
   }
 
