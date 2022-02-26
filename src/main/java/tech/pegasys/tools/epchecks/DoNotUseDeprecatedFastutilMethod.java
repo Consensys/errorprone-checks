@@ -33,8 +33,9 @@ import com.sun.tools.javac.code.Type;
 
 @BugPattern(
     name = "DoNotUseDeprecatedFastutilMethod",
-    summary = "Use the type-specific fastutil method instead.",
-    severity = WARNING)
+    summary = "Use type-specific fastutil method instead.",
+    severity = WARNING,
+    linkType = BugPattern.LinkType.NONE)
 public class DoNotUseDeprecatedFastutilMethod extends BugChecker
     implements MethodInvocationTreeMatcher {
 
@@ -451,18 +452,14 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   @Override
   public Description matchMethodInvocation(MethodInvocationTree tree, VisitorState state) {
     if (DEPRECATED_METHOD.matches(tree, state)) {
-      return buildDescription(tree)
-          .setMessage("Use type-specific method instead.")
-          .setLinkUrl("https://github.com/ConsenSys/errorprone-checks")
-          .build();
+      return describeMatch(tree);
     }
     if (DEPRECATED_ENTRYSET.matches(tree, state)) {
       return buildDescription(tree)
-          .setMessage("Use type-specific entrySet method instead.")
+          .setMessage("Use type-specific fastutil entrySet method instead.")
           .addFix(
               SuggestedFixes.renameMethodInvocation(
                   tree, getTypeSpecificEntrySetFuncName(tree, state), state))
-          .setLinkUrl("https://github.com/ConsenSys/errorprone-checks")
           .build();
     }
     return Description.NO_MATCH;

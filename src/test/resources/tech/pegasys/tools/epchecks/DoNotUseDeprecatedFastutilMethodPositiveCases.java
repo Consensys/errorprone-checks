@@ -64,26 +64,26 @@ public class DoNotUseDeprecatedFastutilMethodPositiveCases {
   public void useDeprecatedIntMethods() {
     IntList int_list = IntList.of(1, 2, 3);
 
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     int_list.contains(Integer.valueOf(1));
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     int_list.indexOf(Integer.valueOf(1));
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     int_list.add(Integer.valueOf(1));
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     int_list.add(2, Integer.valueOf(1));
   }
 
   public void useDeprecatedCharMethods() {
     CharList char_list = CharList.of('a', 'b', 'c');
 
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     char_list.contains(Character.valueOf('a'));
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     char_list.indexOf(Character.valueOf('a'));
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     char_list.add(Character.valueOf('a'));
-    // BUG: Diagnostic contains: Use type-specific method instead
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     char_list.add(2, Character.valueOf('a'));
   }
 }
