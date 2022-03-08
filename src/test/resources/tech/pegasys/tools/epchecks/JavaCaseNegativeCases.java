@@ -18,7 +18,8 @@ package tech.pegasys.tools.epchecks;
 public class JavaCaseNegativeCases {
 
   public static final int PARAM_NAME = 1;
-  public static int anotherParamName = 4;
+  public static int anotherParamName = 2;
+  public final int finalButNotStatic = 3;
 
   public void declaresValidVariable() {
     int paramName = 27;

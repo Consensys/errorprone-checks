@@ -17,6 +17,7 @@ import static com.google.errorprone.bugpatterns.BugChecker.ClassTreeMatcher;
 import static com.google.errorprone.bugpatterns.BugChecker.MethodTreeMatcher;
 import static com.google.errorprone.bugpatterns.BugChecker.VariableTreeMatcher;
 
+import java.util.Set;
 import java.util.regex.Pattern;
 import javax.lang.model.element.Modifier;
 
@@ -53,7 +54,8 @@ public class JavaCase extends BugChecker
   public Description matchVariable(VariableTree tree, VisitorState state) {
     String name = tree.getName().toString();
     ModifiersTree modifiers = tree.getModifiers();
-    if (modifiers.getFlags().contains(Modifier.FINAL)) {
+    Set<Modifier> flags = modifiers.getFlags();
+    if (flags.contains(Modifier.STATIC) && flags.contains(Modifier.FINAL)) {
       if (!isUpperUnderscore(name)) {
         return buildDescription(tree)
             .addFix(SuggestedFixes.renameVariable(tree, toUpperUnderscore(name), state))
