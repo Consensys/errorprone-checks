@@ -42,26 +42,26 @@ import com.sun.source.tree.VariableTree;
 public class JavaCase extends BugChecker
     implements MethodTreeMatcher, ClassTreeMatcher, VariableTreeMatcher {
 
-  private static Pattern CAMEL_CASE_PATTERN_LOWER =
+  private static Pattern PATTERN_LOWER_CAMEL =
       Pattern.compile("^[a-z]+[A-Z0-9][a-z0-9]+[A-Za-z0-9]*$");
-  private static Pattern CAMEL_CASE_PATTERN_UPPER =
+  private static Pattern PATTERN_UPPER_CAMEL =
       Pattern.compile("^[A-Z][a-z0-9]*[A-Z0-9][a-z0-9]+[A-Za-z0-9]*$");
-  private static Pattern UNDERSCORE_PATTERN_LOWER = Pattern.compile("^[A-Za-z0-9_]*$");
-  private static Pattern UNDERSCORE_PATTERN_UPPER = Pattern.compile("^[A-Z0-9_]*$");
+  private static Pattern PATTERN_LOWER_UNDERSCORE = Pattern.compile("^[A-Za-z0-9_]*$");
+  private static Pattern PATTERN_UPPER_UNDERSCORE = Pattern.compile("^[A-Z0-9_]*$");
 
   @Override
   public Description matchVariable(VariableTree tree, VisitorState state) {
     String name = tree.getName().toString();
     ModifiersTree modifiers = tree.getModifiers();
     if (modifiers.getFlags().contains(Modifier.FINAL)) {
-      if (!isUpperUnderscoreCase(name)) {
+      if (!isUpperUnderscore(name)) {
         return buildDescription(tree)
             .addFix(SuggestedFixes.renameVariable(tree, toUpperUnderscore(name), state))
             .build();
       }
-    } else if (!isLowerCamelCase(name)) {
+    } else if (!isLowerCamel(name)) {
       return buildDescription(tree)
-          .addFix(SuggestedFixes.renameVariable(tree, toCamelCaseLower(name), state))
+          .addFix(SuggestedFixes.renameVariable(tree, toLowerCamel(name), state))
           .build();
     }
     return Description.NO_MATCH;
@@ -70,9 +70,9 @@ public class JavaCase extends BugChecker
   @Override
   public Description matchMethod(MethodTree tree, VisitorState state) {
     String name = tree.getName().toString();
-    if (!isLowerCamelCase(name)) {
+    if (!isLowerCamel(name)) {
       return buildDescription(tree)
-          .addFix(SuggestedFixes.renameMethod(tree, toCamelCaseLower(name), state))
+          .addFix(SuggestedFixes.renameMethod(tree, toLowerCamel(name), state))
           .build();
     }
     return Description.NO_MATCH;
@@ -81,8 +81,8 @@ public class JavaCase extends BugChecker
   @Override
   public Description matchClass(ClassTree tree, VisitorState state) {
     String name = tree.getSimpleName().toString();
-    if (!isUpperCamelCase(name)) {
-      String update = tree.toString().replace(name, toCamelCaseUpper(name));
+    if (!isUpperCamel(name)) {
+      String update = tree.toString().replace(name, toUpperCamel(name));
       update = update.split("\\r?\\n")[1];
       return buildDescription(tree)
           .addFix(SuggestedFix.builder().replace(tree, update).build())
@@ -91,40 +91,40 @@ public class JavaCase extends BugChecker
     return Description.NO_MATCH;
   }
 
-  private static boolean isLowerCamelCase(String name) {
-    return CAMEL_CASE_PATTERN_LOWER.matcher(name).matches();
+  private static boolean isLowerCamel(String name) {
+    return PATTERN_LOWER_CAMEL.matcher(name).matches();
   }
 
-  private static boolean isUpperCamelCase(String name) {
-    return CAMEL_CASE_PATTERN_UPPER.matcher(name).matches();
+  private static boolean isUpperCamel(String name) {
+    return PATTERN_UPPER_CAMEL.matcher(name).matches();
   }
 
-  private static boolean isLowerUnderscoreCase(String name) {
-    return UNDERSCORE_PATTERN_LOWER.matcher(name).matches();
+  private static boolean isLowerUnderscore(String name) {
+    return PATTERN_LOWER_UNDERSCORE.matcher(name).matches();
   }
 
-  private static boolean isUpperUnderscoreCase(String name) {
-    return UNDERSCORE_PATTERN_UPPER.matcher(name).matches();
+  private static boolean isUpperUnderscore(String name) {
+    return PATTERN_UPPER_UNDERSCORE.matcher(name).matches();
   }
 
-  private static String toCamelCaseLower(String name) {
+  private static String toLowerCamel(String name) {
     CaseFormat format = CaseFormat.LOWER_UNDERSCORE;
-    if (isUpperCamelCase(name)) format = CaseFormat.UPPER_CAMEL;
-    else if (isUpperUnderscoreCase(name)) format = CaseFormat.UPPER_UNDERSCORE;
+    if (isUpperCamel(name)) format = CaseFormat.UPPER_CAMEL;
+    else if (isUpperUnderscore(name)) format = CaseFormat.UPPER_UNDERSCORE;
     return format.to(CaseFormat.LOWER_CAMEL, name);
   }
 
-  private static String toCamelCaseUpper(String name) {
+  private static String toUpperCamel(String name) {
     CaseFormat format = CaseFormat.LOWER_UNDERSCORE;
-    if (isLowerCamelCase(name)) format = CaseFormat.LOWER_CAMEL;
-    else if (isUpperUnderscoreCase(name)) format = CaseFormat.UPPER_UNDERSCORE;
+    if (isLowerCamel(name)) format = CaseFormat.LOWER_CAMEL;
+    else if (isUpperUnderscore(name)) format = CaseFormat.UPPER_UNDERSCORE;
     return format.to(CaseFormat.UPPER_CAMEL, name);
   }
 
   private static String toUpperUnderscore(String name) {
     CaseFormat format = CaseFormat.LOWER_UNDERSCORE;
-    if (isLowerCamelCase(name)) format = CaseFormat.LOWER_CAMEL;
-    else if (isUpperCamelCase(name)) format = CaseFormat.UPPER_CAMEL;
+    if (isLowerCamel(name)) format = CaseFormat.LOWER_CAMEL;
+    else if (isUpperCamel(name)) format = CaseFormat.UPPER_CAMEL;
     return format.to(CaseFormat.UPPER_UNDERSCORE, name);
   }
 }
