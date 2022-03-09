@@ -19,6 +19,7 @@ import static com.google.errorprone.matchers.Matchers.instanceMethod;
 import java.util.List;
 import java.util.Map;
 
+import com.google.auto.service.AutoService;
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
 import com.google.errorprone.bugpatterns.BugChecker;
@@ -26,11 +27,13 @@ import com.google.errorprone.bugpatterns.BugChecker.MethodInvocationTreeMatcher;
 import com.google.errorprone.fixes.SuggestedFixes;
 import com.google.errorprone.matchers.Description;
 import com.google.errorprone.matchers.Matcher;
+import com.google.errorprone.suppliers.Suppliers;
 import com.google.errorprone.util.ASTHelpers;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Type;
 
+@AutoService(BugChecker.class)
 @BugPattern(
     name = "DoNotUseDeprecatedFastutilMethod",
     summary = "Use type-specific fastutil method instead.",
@@ -100,125 +103,125 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
           instanceMethod()
               .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("contains")
-              .withParameters("java.lang.Object"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
           instanceMethod()
               .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("indexOf")
-              .withParameters("java.lang.Object"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
           instanceMethod()
               .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("remove")
-              .withParameters("java.lang.Object"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
           instanceMethod()
               .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("lastIndexOf")
-              .withParameters("java.lang.Object"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
           instanceMethod()
               .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("get")
-              .withParameters("java.lang.Object"));
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_ADD =
       anyOf(
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
               .named("add")
-              .withParameters("java.lang.Boolean"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Boolean"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
               .named("add")
-              .withParameters("int", "java.lang.Boolean"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Boolean"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
               .named("add")
-              .withParameters("java.lang.Byte"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Byte"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
               .named("add")
-              .withParameters("int", "java.lang.Byte"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Byte"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
               .named("add")
-              .withParameters("java.lang.Character"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Character"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
               .named("add")
-              .withParameters("int", "java.lang.Character"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Character"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
               .named("add")
-              .withParameters("java.lang.Double"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Double"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
               .named("add")
-              .withParameters("int", "java.lang.Double"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Double"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
               .named("add")
-              .withParameters("java.lang.Float"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Float"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
               .named("add")
-              .withParameters("int", "java.lang.Float"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Float"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
               .named("add")
-              .withParameters("java.lang.Integer"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Integer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
               .named("add")
-              .withParameters("int", "java.lang.Integer"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Integer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
               .named("add")
-              .withParameters("java.lang.Long"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Long"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
               .named("add")
-              .withParameters("int", "java.lang.Long"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Long"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
               .named("add")
-              .withParameters("java.lang.Short"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Short"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
               .named("add")
-              .withParameters("int", "java.lang.Short"));
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Short"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_FOR_EACH =
       anyOf(
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Boolean>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Byte>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Character>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Double>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Float>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Integer>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Long>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
               .named("forEach")
-              .withParameters("java.util.function.Consumer<? super java.lang.Short>"));
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_PARALLEL_STREAM =
       anyOf(
@@ -257,140 +260,157 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Boolean>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Byte>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Character>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Double>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Float>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Integer>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Long>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortCollection")
               .named("removeIf")
-              .withParameters("java.util.function.Predicate<? super java.lang.Short>"));
+              .withParametersOfType(
+                  Suppliers.fromStrings(List.of("java.util.function.Predicate"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_REPLACE_ALL =
       anyOf(
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Boolean>"),
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Boolean>"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Byte>"),
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Byte>"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Character>"),
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Character>"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Double>"),
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Double>"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Float>"),
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Float>"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Integer>"),
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Integer>"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Long>"),
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Long>"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
               .named("replaceAll")
-              .withParameters("java.util.function.UnaryOperator<java.lang.Short>"));
+              .withParametersOfType(
+                  Suppliers.fromStrings(
+                      List.of("java.util.function.UnaryOperator<java.lang.Short>"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_SET =
       anyOf(
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanList")
               .named("set")
-              .withParameters("java.lang.Boolean"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Boolean"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteList")
               .named("set")
-              .withParameters("int", "java.lang.Byte"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Byte"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharList")
               .named("set")
-              .withParameters("int", "java.lang.Character"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Character"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleList")
               .named("set")
-              .withParameters("int", "java.lang.Double"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Double"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatList")
               .named("set")
-              .withParameters("int", "java.lang.Float"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Float"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntList")
               .named("set")
-              .withParameters("int", "java.lang.Integer"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Integer"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongList")
               .named("set")
-              .withParameters("int", "java.lang.Long"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Long"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortList")
               .named("set")
-              .withParameters("int", "java.lang.Short"));
+              .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Short"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_SORT =
       anyOf(
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Boolean>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Byte>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Character>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Double>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Float>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Integer>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Long>"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
               .namedAnyOf("sort", "unstableSort")
-              .withParameters("java.util.Comparator<? super java.lang.Short>"));
+              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_STREAM =
       instanceMethod().onDescendantOfAny(FASTUTIL_COLLECTION).named("stream");
@@ -400,35 +420,35 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanCollection")
               .named("toBooleanArray")
-              .withParameters("boolean[]"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("boolean[]"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteCollection")
               .named("toByteArray")
-              .withParameters("byte[]"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("byte[]"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharCollection")
               .named("toCharArray")
-              .withParameters("char[]"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("char[]"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleCollection")
               .named("toDoubleArray")
-              .withParameters("double[]"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("double[]"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatCollection")
               .named("toFloatArray")
-              .withParameters("float[]"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("float[]"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntCollection")
               .named("toIntArray")
-              .withParameters("int[]"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("int[]"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongCollection")
               .named("toLongArray")
-              .withParameters("long[]"),
+              .withParametersOfType(Suppliers.fromStrings(List.of("long[]"))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortCollection")
               .named("toShortArray")
-              .withParameters("short[]"));
+              .withParametersOfType(Suppliers.fromStrings(List.of("short[]"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_METHOD =
       anyOf(
