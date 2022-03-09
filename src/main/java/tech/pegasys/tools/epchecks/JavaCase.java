@@ -29,6 +29,7 @@ import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.fixes.SuggestedFix;
 import com.google.errorprone.fixes.SuggestedFixes;
 import com.google.errorprone.matchers.Description;
+import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ModifiersTree;
@@ -43,25 +44,26 @@ import com.sun.source.tree.VariableTree;
 public class JavaCase extends BugChecker
     implements MethodTreeMatcher, ClassTreeMatcher, VariableTreeMatcher {
 
-  private static Pattern PATTERN_LOWER_CAMEL =
-      Pattern.compile("^[a-z]+[A-Z0-9][a-z0-9]+[A-Za-z0-9]*$");
-  private static Pattern PATTERN_UPPER_CAMEL =
-      Pattern.compile("^[A-Z][a-z0-9]*[A-Z0-9][a-z0-9]+[A-Za-z0-9]*$");
-  private static Pattern PATTERN_LOWER_UNDERSCORE = Pattern.compile("^[A-Za-z0-9_]*$");
-  private static Pattern PATTERN_UPPER_UNDERSCORE = Pattern.compile("^[A-Z0-9_]*$");
+  private static final Pattern PATTERN_HAS_LOWER = Pattern.compile("^.*[a-z].*$");
+  private static final Pattern PATTERN_HAS_UPPER = Pattern.compile("^.*[A-Z].*$");
+  private static final Pattern PATTERN_STARTS_WITH_LOWER = Pattern.compile("^[a-z].*$");
+  private static final Pattern PATTERN_STARTS_WITH_UPPER = Pattern.compile("^[A-Z].*$");
+  private static final Pattern PATTERN_UNDERSCORES = Pattern.compile("^_+$");
 
   @Override
   public Description matchVariable(VariableTree tree, VisitorState state) {
     String name = tree.getName().toString();
     ModifiersTree modifiers = tree.getModifiers();
     Set<Modifier> flags = modifiers.getFlags();
+
+    // Constants should be all uppercase.
     if (flags.contains(Modifier.STATIC) && flags.contains(Modifier.FINAL)) {
       if (!isUpperUnderscore(name)) {
         return buildDescription(tree)
             .addFix(SuggestedFixes.renameVariable(tree, toUpperUnderscore(name), state))
             .build();
       }
-    } else if (!isLowerCamel(name)) {
+    } else if (!isUnderscore(name) && !isLowerCamel(name)) {
       return buildDescription(tree)
           .addFix(SuggestedFixes.renameVariable(tree, toLowerCamel(name), state))
           .build();
@@ -72,7 +74,12 @@ public class JavaCase extends BugChecker
   @Override
   public Description matchMethod(MethodTree tree, VisitorState state) {
     String name = tree.getName().toString();
-    if (!isLowerCamel(name)) {
+
+    // Class constructors have the <init> name.
+    if (name.equals("<init>")) return Description.NO_MATCH;
+
+    // Test methods often have underscores which are fine.
+    if (!isLowerCamel(name) && !isTestMethod(tree)) {
       return buildDescription(tree)
           .addFix(SuggestedFixes.renameMethod(tree, toLowerCamel(name), state))
           .build();
@@ -83,7 +90,13 @@ public class JavaCase extends BugChecker
   @Override
   public Description matchClass(ClassTree tree, VisitorState state) {
     String name = tree.getSimpleName().toString();
-    if (!isUpperCamel(name)) {
+
+    // Anonymous classes have no name.
+    if (name.isEmpty()) {
+      return Description.NO_MATCH;
+    }
+
+    if (!isAllUpper(name) && !isUpperCamel(name)) {
       String update = tree.toString().replace(name, toUpperCamel(name));
       update = update.split("\\r?\\n")[1];
       return buildDescription(tree)
@@ -93,20 +106,35 @@ public class JavaCase extends BugChecker
     return Description.NO_MATCH;
   }
 
+  private static boolean isUnderscore(String name) {
+    return PATTERN_UNDERSCORES.matcher(name).matches();
+  }
+
   private static boolean isLowerCamel(String name) {
-    return PATTERN_LOWER_CAMEL.matcher(name).matches();
+    return !name.contains("_") && PATTERN_STARTS_WITH_LOWER.matcher(name).matches();
   }
 
   private static boolean isUpperCamel(String name) {
-    return PATTERN_UPPER_CAMEL.matcher(name).matches();
-  }
-
-  private static boolean isLowerUnderscore(String name) {
-    return PATTERN_LOWER_UNDERSCORE.matcher(name).matches();
+    return !name.contains("_")
+        && PATTERN_STARTS_WITH_UPPER.matcher(name).matches()
+        && PATTERN_HAS_LOWER.matcher(name).matches();
   }
 
   private static boolean isUpperUnderscore(String name) {
-    return PATTERN_UPPER_UNDERSCORE.matcher(name).matches();
+    return !PATTERN_HAS_LOWER.matcher(name).matches();
+  }
+
+  private static boolean isTestMethod(MethodTree tree) {
+    for (AnnotationTree t : tree.getModifiers().getAnnotations()) {
+      if (t.getAnnotationType().toString().equals("Test")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isAllUpper(String name) {
+    return !name.contains("_") && !PATTERN_HAS_LOWER.matcher(name).matches();
   }
 
   private static String toLowerCamel(String name) {

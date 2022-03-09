@@ -32,6 +32,9 @@ public class JavaCasePositiveCases {
   // BUG: Diagnostic contains: finalParamName
   public final int final_param_name = 5;
 
+  // BUG: Diagnostic contains: upper
+  private static Integer UPPER;
+
   public void declaresInvalidVariable() {
     // BUG: Diagnostic contains: paramName
     int param_name = 27;
