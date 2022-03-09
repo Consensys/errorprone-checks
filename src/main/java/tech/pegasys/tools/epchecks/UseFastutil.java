@@ -21,6 +21,7 @@ import static com.google.errorprone.matchers.method.MethodMatchers.constructor;
 import java.util.List;
 import java.util.Map;
 
+import com.google.auto.service.AutoService;
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
 import com.google.errorprone.bugpatterns.BugChecker;
@@ -39,6 +40,7 @@ import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.TypeTag;
 
+@AutoService(BugChecker.class)
 @BugPattern(
     name = "UseFastutil",
     summary = "Use the fastutil equivalent for better performance.",
@@ -64,10 +66,7 @@ public class UseFastutil extends BugChecker
           constructor().forClass("java.util.TreeSet"));
 
   private static final Matcher<ExpressionTree> NEW_MAP =
-      anyOf(
-          constructor().forClass("java.util.HashMap"),
-          constructor().forClass("java.util.LinkedHashMap"),
-          constructor().forClass("java.util.TreeMap"));
+      anyOf(constructor().forClass("java.util.HashMap"));
 
   private static final Matcher<MethodInvocationTree> ITERABLE_OF =
       anyOf(
