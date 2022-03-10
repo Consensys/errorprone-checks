@@ -116,10 +116,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
               .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("lastIndexOf")
               .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
-          instanceMethod()
-              .onDescendantOfAny(FASTUTIL_ITERABLE)
-              .named("get")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))));
+          instanceMethod().onDescendantOfAny(FASTUTIL_ITERABLE).named("get"));
 
   private static final Matcher<ExpressionTree> DEPRECATED_ADD =
       anyOf(
@@ -191,64 +188,12 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_FOR_EACH =
       anyOf(
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
-              .named("forEach")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
-              .named("forEach")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
-              .named("forEach")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
-              .named("forEach")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
-              .named("forEach")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
-              .named("forEach")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
-              .named("forEach")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
+              .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("forEach")
               .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Consumer"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_PARALLEL_STREAM =
-      anyOf(
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanCollection")
-              .named("parallelStream"),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteCollection")
-              .named("parallelStream"),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharCollection")
-              .named("parallelStream"),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleCollection")
-              .named("parallelStream"),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatCollection")
-              .named("parallelStream"),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntCollection")
-              .named("parallelStream"),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongCollection")
-              .named("parallelStream"),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortCollection")
-              .named("parallelStream"));
+      anyOf(instanceMethod().onDescendantOfAny(FASTUTIL_COLLECTION).named("parallelStream"));
 
   private static final Matcher<ExpressionTree> DEPRECATED_REMOVE =
       anyOf(
@@ -258,35 +203,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_REMOVE_IF =
       anyOf(
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanCollection")
-              .named("removeIf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteCollection")
-              .named("removeIf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharCollection")
-              .named("removeIf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleCollection")
-              .named("removeIf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatCollection")
-              .named("removeIf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntCollection")
-              .named("removeIf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongCollection")
-              .named("removeIf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.function.Predicate"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortCollection")
+              .onDescendantOfAny(FASTUTIL_COLLECTION)
               .named("removeIf")
               .withParametersOfType(
                   Suppliers.fromStrings(List.of("java.util.function.Predicate"))));
@@ -294,53 +211,10 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_REPLACE_ALL =
       anyOf(
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
+              .onDescendantOfAny(FASTUTIL_ITERABLE)
               .named("replaceAll")
               .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Boolean>"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
-              .named("replaceAll")
-              .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Byte>"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
-              .named("replaceAll")
-              .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Character>"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
-              .named("replaceAll")
-              .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Double>"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
-              .named("replaceAll")
-              .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Float>"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
-              .named("replaceAll")
-              .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Integer>"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
-              .named("replaceAll")
-              .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Long>"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
-              .named("replaceAll")
-              .withParametersOfType(
-                  Suppliers.fromStrings(
-                      List.of("java.util.function.UnaryOperator<java.lang.Short>"))));
+                  Suppliers.fromStrings(List.of("java.util.function.UnaryOperator"))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_SET =
       anyOf(
@@ -380,35 +254,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_SORT =
       anyOf(
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
-              .namedAnyOf("sort", "unstableSort")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteIterable")
-              .namedAnyOf("sort", "unstableSort")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharIterable")
-              .namedAnyOf("sort", "unstableSort")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleIterable")
-              .namedAnyOf("sort", "unstableSort")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatIterable")
-              .namedAnyOf("sort", "unstableSort")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntIterable")
-              .namedAnyOf("sort", "unstableSort")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongIterable")
-              .namedAnyOf("sort", "unstableSort")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))),
-          instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortIterable")
+              .onDescendantOfAny(FASTUTIL_ITERABLE)
               .namedAnyOf("sort", "unstableSort")
               .withParametersOfType(Suppliers.fromStrings(List.of("java.util.Comparator"))));
 
@@ -420,35 +266,36 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanCollection")
               .named("toBooleanArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("boolean[]"))),
+              .withParametersOfType(
+                  List.of(Suppliers.arrayOf(Suppliers.typeFromString("boolean")))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.bytes.ByteCollection")
               .named("toByteArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("byte[]"))),
+              .withParametersOfType(List.of(Suppliers.arrayOf(Suppliers.typeFromString("byte")))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.chars.CharCollection")
               .named("toCharArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("char[]"))),
+              .withParametersOfType(List.of(Suppliers.arrayOf(Suppliers.typeFromString("char")))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.doubles.DoubleCollection")
               .named("toDoubleArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("double[]"))),
+              .withParametersOfType(List.of(Suppliers.arrayOf(Suppliers.typeFromString("double")))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.floats.FloatCollection")
               .named("toFloatArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("float[]"))),
+              .withParametersOfType(List.of(Suppliers.arrayOf(Suppliers.typeFromString("float")))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.ints.IntCollection")
               .named("toIntArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("int[]"))),
+              .withParametersOfType(List.of(Suppliers.arrayOf(Suppliers.typeFromString("int")))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.longs.LongCollection")
               .named("toLongArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("long[]"))),
+              .withParametersOfType(List.of(Suppliers.arrayOf(Suppliers.typeFromString("long")))),
           instanceMethod()
               .onDescendantOfAny("it.unimi.dsi.fastutil.shorts.ShortCollection")
               .named("toShortArray")
-              .withParametersOfType(Suppliers.fromStrings(List.of("short[]"))));
+              .withParametersOfType(List.of(Suppliers.arrayOf(Suppliers.typeFromString("short")))));
 
   private static final Matcher<ExpressionTree> DEPRECATED_METHOD =
       anyOf(

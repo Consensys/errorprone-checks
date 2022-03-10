@@ -14,18 +14,27 @@
  */
 package tech.pegasys.tools.epchecks;
 
-import java.util.Map;
+import java.util.Comparator;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.Iterator;
+import java.util.Map;
 
 import it.unimi.dsi.fastutil.bytes.Byte2CharLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.bytes.Byte2CharSortedMap;
+import it.unimi.dsi.fastutil.bytes.ByteList;
 import it.unimi.dsi.fastutil.chars.CharList;
 import it.unimi.dsi.fastutil.doubles.Double2ByteRBTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class DoNotUseDeprecatedFastutilMethodPositiveCases {
+
+  private static final IntList INT_LIST = IntList.of(1, 2, 3);
+  private static final IntSet INT_SET = IntSet.of(1, 2, 3);
 
   public void int2ObjectMapForEach() {
     Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
@@ -61,29 +70,86 @@ public class DoNotUseDeprecatedFastutilMethodPositiveCases {
     }
   }
 
-  public void useDeprecatedIntMethods() {
-    IntList int_list = IntList.of(1, 2, 3);
-
+  public void useDeprecatedGenerics() {
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    int_list.contains(Integer.valueOf(1));
+    INT_LIST.contains(Integer.valueOf(1));
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    int_list.indexOf(Integer.valueOf(1));
+    INT_LIST.indexOf(Integer.valueOf(1));
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    int_list.add(Integer.valueOf(1));
+    INT_LIST.remove(Integer.valueOf(1));
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    int_list.add(2, Integer.valueOf(1));
+    INT_LIST.lastIndexOf(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.get(Integer.valueOf(1));
   }
 
-  public void useDeprecatedCharMethods() {
-    CharList char_list = CharList.of('a', 'b', 'c');
+  public void useDeprecatedAdd() {
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.add(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.add(1, Integer.valueOf(1));
+  }
 
+  public void useDeprecatedForEach() {
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    char_list.contains(Character.valueOf('a'));
+    INT_LIST.forEach(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer num) {
+                System.out.println(num);
+            }
+        });
+  }
+
+  public void useDeprecatedParallelStream() {
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    char_list.indexOf(Character.valueOf('a'));
+    INT_LIST.parallelStream();
+  }
+
+  public void useDeprecatedRemove() {
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    char_list.add(Character.valueOf('a'));
+    INT_LIST.remove(2);
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    char_list.add(2, Character.valueOf('a'));
+    INT_SET.rem(2);
+  }
+
+  public void useDeprecatedRemoveIf() {
+    Predicate<Integer> pr = a -> (a == 27);
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.removeIf(pr);
+  }
+
+  class MyOperator<T> implements UnaryOperator<T>{
+    T varc1;
+    public T apply(T varc){
+      return varc1;
+    }
+  }
+
+  public void useDeprecatedReplaceAll() {
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.replaceAll(new MyOperator<Integer>());
+  }
+
+  public void useDeprecatedSet() {
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.set(0, Integer.valueOf(4));
+  }
+
+  public void useDeprecatedSort() {
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.sort(Comparator.reverseOrder());
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.unstableSort(Comparator.reverseOrder());
+  }
+
+  public void useDeprecatedStream() {
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.stream();
+  }
+
+  public void useDeprecatedToArray() {
+    int[] arr = new int[3];
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    INT_LIST.toIntArray(arr);
   }
 }
