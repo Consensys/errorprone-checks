@@ -63,4 +63,15 @@ public class JavaCasePositiveCases {
 
   // BUG: Diagnostic contains: InvalidClassName
   private class INVALID_CLASS_NAME {}
+
+  private interface TestInterface {
+    // BUG: Diagnostic contains: NUMBER_ONE
+    int numberOne = 1;
+
+    // BUG: Diagnostic contains: NUMBER_TWO
+    int NumberTwo = 2;
+
+    // BUG: Diagnostic contains: NUMBER_THREE
+    int number_three = 3;
+  }
 }

@@ -32,7 +32,7 @@ import com.google.errorprone.matchers.Description;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.ModifiersTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 
 @AutoService(BugChecker.class)
@@ -53,17 +53,17 @@ public class JavaCase extends BugChecker
   @Override
   public Description matchVariable(VariableTree tree, VisitorState state) {
     String name = tree.getName().toString();
-    ModifiersTree modifiers = tree.getModifiers();
-    Set<Modifier> flags = modifiers.getFlags();
 
     // Constants should be all uppercase.
-    if (flags.contains(Modifier.STATIC) && flags.contains(Modifier.FINAL)) {
+    // All variables are implicitly constant in interfaces.
+    if (isConstant(tree) || isInterface(state)) {
       if (!isUpperUnderscore(name)) {
         return buildDescription(tree)
             .addFix(SuggestedFixes.renameVariable(tree, toUpperUnderscore(name), state))
             .build();
       }
-    } else if (!isUnderscore(name) && !isLowerCamel(name)) {
+      // Lambdas often use _ or __ for var names. This is fine.
+    } else if (!isOneOrMoreUnderscores(name) && !isLowerCamel(name)) {
       return buildDescription(tree)
           .addFix(SuggestedFixes.renameVariable(tree, toLowerCamel(name), state))
           .build();
@@ -76,9 +76,11 @@ public class JavaCase extends BugChecker
     String name = tree.getName().toString();
 
     // Class constructors have the <init> name.
-    if (name.equals("<init>")) return Description.NO_MATCH;
+    if (name.equals("<init>")) {
+      return Description.NO_MATCH;
+    }
 
-    // Test methods often have underscores which are fine.
+    // Ignore test methods often have underscores mixed in.
     if (!isLowerCamel(name) && !isTestMethod(tree)) {
       return buildDescription(tree)
           .addFix(SuggestedFixes.renameMethod(tree, toLowerCamel(name), state))
@@ -106,7 +108,17 @@ public class JavaCase extends BugChecker
     return Description.NO_MATCH;
   }
 
-  private static boolean isUnderscore(String name) {
+  private static boolean isConstant(VariableTree tree) {
+    Set<Modifier> flags = tree.getModifiers().getFlags();
+    return flags.contains(Modifier.STATIC) && flags.contains(Modifier.FINAL);
+  }
+
+  private static boolean isInterface(VisitorState state) {
+    Tree node = state.getPath().getParentPath().getLeaf();
+    return node.getKind() == Tree.Kind.INTERFACE;
+  }
+
+  private static boolean isOneOrMoreUnderscores(String name) {
     return PATTERN_UNDERSCORES.matcher(name).matches();
   }
 
@@ -139,15 +151,21 @@ public class JavaCase extends BugChecker
 
   private static String toLowerCamel(String name) {
     CaseFormat format = CaseFormat.LOWER_UNDERSCORE;
-    if (isUpperCamel(name)) format = CaseFormat.UPPER_CAMEL;
-    else if (isUpperUnderscore(name)) format = CaseFormat.UPPER_UNDERSCORE;
+    if (isUpperCamel(name)) {
+      format = CaseFormat.UPPER_CAMEL;
+    } else if (isUpperUnderscore(name)) {
+      format = CaseFormat.UPPER_UNDERSCORE;
+    }
     return format.to(CaseFormat.LOWER_CAMEL, name);
   }
 
   private static String toUpperCamel(String name) {
     CaseFormat format = CaseFormat.LOWER_UNDERSCORE;
-    if (isLowerCamel(name)) format = CaseFormat.LOWER_CAMEL;
-    else if (isUpperUnderscore(name)) format = CaseFormat.UPPER_UNDERSCORE;
+    if (isLowerCamel(name)) {
+      format = CaseFormat.LOWER_CAMEL;
+    } else if (isUpperUnderscore(name)) {
+      format = CaseFormat.UPPER_UNDERSCORE;
+    }
     return format.to(CaseFormat.UPPER_CAMEL, name);
   }
 
