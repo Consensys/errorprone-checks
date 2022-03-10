@@ -39,6 +39,10 @@ java {
     withSourcesJar()
 }
 
+test {
+    environment 'USE_FASTUTIL_CHECK', '1'
+}
+
 spotless {
     java {
         removeUnusedImports()
