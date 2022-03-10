@@ -171,8 +171,11 @@ public class JavaCase extends BugChecker
 
   private static String toUpperUnderscore(String name) {
     CaseFormat format = CaseFormat.LOWER_UNDERSCORE;
-    if (isLowerCamel(name)) format = CaseFormat.LOWER_CAMEL;
-    else if (isUpperCamel(name)) format = CaseFormat.UPPER_CAMEL;
+    if (isLowerCamel(name)) {
+      format = CaseFormat.LOWER_CAMEL;
+    } else if (isUpperCamel(name)) {
+      format = CaseFormat.UPPER_CAMEL;
+    }
     return format.to(CaseFormat.UPPER_UNDERSCORE, name);
   }
 }
