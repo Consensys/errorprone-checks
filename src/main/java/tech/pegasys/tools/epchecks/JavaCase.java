@@ -138,7 +138,7 @@ public class JavaCase extends BugChecker
 
   private static boolean isTestMethod(MethodTree tree) {
     for (AnnotationTree t : tree.getModifiers().getAnnotations()) {
-      if (t.getAnnotationType().toString().equals("Test")) {
+      if (t.getAnnotationType().toString().contains("Test")) {
         return true;
       }
     }
