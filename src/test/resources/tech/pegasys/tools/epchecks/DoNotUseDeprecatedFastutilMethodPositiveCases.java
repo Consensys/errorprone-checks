@@ -21,19 +21,27 @@ import java.util.function.UnaryOperator;
 import java.util.Iterator;
 import java.util.Map;
 
-import it.unimi.dsi.fastutil.bytes.Byte2CharLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.bytes.Byte2CharSortedMap;
-import it.unimi.dsi.fastutil.bytes.ByteList;
-import it.unimi.dsi.fastutil.chars.CharList;
-import it.unimi.dsi.fastutil.doubles.Double2ByteRBTreeMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.booleans.*;
+import it.unimi.dsi.fastutil.bytes.*;
+import it.unimi.dsi.fastutil.chars.*;
+import it.unimi.dsi.fastutil.doubles.*;
+import it.unimi.dsi.fastutil.floats.*;
+import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.shorts.*;
 
 public class DoNotUseDeprecatedFastutilMethodPositiveCases {
 
+  private static final BooleanList BOOLEAN_LIST = BooleanList.of(true, false, true);
+  private static final ByteList BYTE_LIST = ByteList.of((byte)1, (byte)2, (byte)3);
+  private static final CharList CHAR_LIST = CharList.of('a', 'b', 'c');
+  private static final DoubleList DOUBLE_LIST = DoubleList.of(1.0, 2.0, 3.0);
+  private static final FloatList FLOAT_LIST = FloatList.of(1.0F, 2.0F, 3.0F);
   private static final IntList INT_LIST = IntList.of(1, 2, 3);
+  private static final LongList LONG_LIST = LongList.of(1L, 2L, 3L);
+  private static final ShortList SHORT_LIST = ShortList.of((short)1, (short)2, (short)3);
+
   private static final IntSet INT_SET = IntSet.of(1, 2, 3);
 
   public void int2ObjectMapForEach() {
@@ -72,6 +80,61 @@ public class DoNotUseDeprecatedFastutilMethodPositiveCases {
 
   public void useDeprecatedGenerics() {
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BOOLEAN_LIST.contains(Boolean.valueOf(true));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BOOLEAN_LIST.indexOf(Boolean.valueOf(true));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BOOLEAN_LIST.remove(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BOOLEAN_LIST.lastIndexOf(Boolean.valueOf(true));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BOOLEAN_LIST.get(1);
+
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BYTE_LIST.contains(Byte.valueOf("1"));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BYTE_LIST.indexOf(Byte.valueOf("1"));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BYTE_LIST.remove(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BYTE_LIST.lastIndexOf(Byte.valueOf("1"));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    BYTE_LIST.get(1);
+
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    CHAR_LIST.contains(Character.valueOf('a'));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    CHAR_LIST.indexOf(Character.valueOf('a'));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    CHAR_LIST.remove(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    CHAR_LIST.lastIndexOf(Character.valueOf('a'));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    CHAR_LIST.get(1);
+
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    DOUBLE_LIST.contains(Double.valueOf(1.0));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    DOUBLE_LIST.indexOf(Double.valueOf(1.0));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    DOUBLE_LIST.remove(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    DOUBLE_LIST.lastIndexOf(Double.valueOf(1.0));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    DOUBLE_LIST.get(1);
+
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    FLOAT_LIST.contains(Float.valueOf(1.0F));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    FLOAT_LIST.indexOf(Float.valueOf(1.0F));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    FLOAT_LIST.remove(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    FLOAT_LIST.lastIndexOf(Float.valueOf(1.0F));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    FLOAT_LIST.get(1);
+
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
     INT_LIST.contains(Integer.valueOf(1));
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
     INT_LIST.indexOf(Integer.valueOf(1));
@@ -80,7 +143,29 @@ public class DoNotUseDeprecatedFastutilMethodPositiveCases {
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
     INT_LIST.lastIndexOf(Integer.valueOf(1));
     // BUG: Diagnostic contains: Use type-specific fastutil method instead
-    INT_LIST.get(Integer.valueOf(1));
+    INT_LIST.get(1);
+
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    LONG_LIST.contains(Long.valueOf(1L));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    LONG_LIST.indexOf(Long.valueOf(1L));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    LONG_LIST.remove(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    LONG_LIST.lastIndexOf(Long.valueOf(1L));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    LONG_LIST.get(1);
+
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    SHORT_LIST.contains(Short.valueOf("1"));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    SHORT_LIST.indexOf(Short.valueOf("1"));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    SHORT_LIST.remove(Integer.valueOf(1));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    SHORT_LIST.lastIndexOf(Short.valueOf("1"));
+    // BUG: Diagnostic contains: Use type-specific fastutil method instead
+    SHORT_LIST.get(1);
   }
 
   public void useDeprecatedAdd() {

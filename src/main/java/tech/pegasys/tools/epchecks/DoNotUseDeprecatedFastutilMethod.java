@@ -12,9 +12,10 @@
  */
 package tech.pegasys.tools.epchecks;
 
-import static com.google.errorprone.BugPattern.SeverityLevel.WARNING;
+import static com.google.errorprone.BugPattern.SeverityLevel.SUGGESTION;
 import static com.google.errorprone.matchers.Matchers.anyOf;
 import static com.google.errorprone.matchers.Matchers.instanceMethod;
+import static com.google.errorprone.matchers.Matchers.not;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ import com.sun.tools.javac.code.Type;
 @BugPattern(
     name = "DoNotUseDeprecatedFastutilMethod",
     summary = "Use type-specific fastutil method instead.",
-    severity = WARNING,
+    severity = SUGGESTION,
     linkType = BugPattern.LinkType.NONE)
 public class DoNotUseDeprecatedFastutilMethod extends BugChecker
     implements MethodInvocationTreeMatcher {
@@ -56,7 +57,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
 
   private static final List<String> FASTUTIL_ITERABLE =
       List.of(
-          "it.unimi.dsi.fastutil.bools.BooleanIterable",
+          "it.unimi.dsi.fastutil.booleans.BooleanIterable",
           "it.unimi.dsi.fastutil.bytes.ByteIterable",
           "it.unimi.dsi.fastutil.chars.CharIterable",
           "it.unimi.dsi.fastutil.doubles.DoubleIterable",
@@ -67,7 +68,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
 
   private static final List<String> FASTUTIL_COLLECTION =
       List.of(
-          "it.unimi.dsi.fastutil.bools.BooleanCollection",
+          "it.unimi.dsi.fastutil.booleans.BooleanCollection",
           "it.unimi.dsi.fastutil.bytes.ByteCollection",
           "it.unimi.dsi.fastutil.chars.CharCollection",
           "it.unimi.dsi.fastutil.doubles.DoubleCollection",
@@ -78,7 +79,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
 
   private static final List<String> FASTUTIL_LIST =
       List.of(
-          "it.unimi.dsi.fastutil.bools.BooleanList",
+          "it.unimi.dsi.fastutil.booleans.BooleanList",
           "it.unimi.dsi.fastutil.bytes.ByteList",
           "it.unimi.dsi.fastutil.chars.CharList",
           "it.unimi.dsi.fastutil.doubles.DoubleList",
@@ -89,7 +90,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
 
   private static final List<String> FASTUTIL_SET =
       List.of(
-          "it.unimi.dsi.fastutil.bools.BooleanSet",
+          "it.unimi.dsi.fastutil.booleans.BooleanSet",
           "it.unimi.dsi.fastutil.bytes.ByteSet",
           "it.unimi.dsi.fastutil.chars.CharSet",
           "it.unimi.dsi.fastutil.doubles.DoubleSet",
@@ -102,30 +103,18 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
       anyOf(
           instanceMethod()
               .onDescendantOfAny(FASTUTIL_ITERABLE)
-              .named("contains")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
-          instanceMethod()
-              .onDescendantOfAny(FASTUTIL_ITERABLE)
-              .named("indexOf")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
-          instanceMethod()
-              .onDescendantOfAny(FASTUTIL_ITERABLE)
-              .named("remove")
-              .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
-          instanceMethod()
-              .onDescendantOfAny(FASTUTIL_ITERABLE)
-              .named("lastIndexOf")
+              .namedAnyOf("contains", "indexOf", "remove", "lastIndexOf")
               .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Object"))),
           instanceMethod().onDescendantOfAny(FASTUTIL_ITERABLE).named("get"));
 
   private static final Matcher<ExpressionTree> DEPRECATED_ADD =
       anyOf(
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
+              .onDescendantOfAny("it.unimi.dsi.fastutil.booleans.BooleanIterable")
               .named("add")
               .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Boolean"))),
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanIterable")
+              .onDescendantOfAny("it.unimi.dsi.fastutil.booleans.BooleanIterable")
               .named("add")
               .withParametersOfType(Suppliers.fromStrings(List.of("int", "java.lang.Boolean"))),
           instanceMethod()
@@ -219,7 +208,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_SET =
       anyOf(
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanList")
+              .onDescendantOfAny("it.unimi.dsi.fastutil.booleans.BooleanList")
               .named("set")
               .withParametersOfType(Suppliers.fromStrings(List.of("java.lang.Boolean"))),
           instanceMethod()
@@ -264,7 +253,7 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_TO_ARRAY =
       anyOf(
           instanceMethod()
-              .onDescendantOfAny("it.unimi.dsi.fastutil.bools.BooleanCollection")
+              .onDescendantOfAny("it.unimi.dsi.fastutil.booleans.BooleanCollection")
               .named("toBooleanArray")
               .withParametersOfType(
                   List.of(Suppliers.arrayOf(Suppliers.typeFromString("boolean")))),
@@ -316,12 +305,20 @@ public class DoNotUseDeprecatedFastutilMethod extends BugChecker
   private static final Matcher<ExpressionTree> DEPRECATED_ENTRYSET =
       instanceMethod().onDescendantOfAny(FASTUTIL_FUNCTION).named("entrySet");
 
+  // Object2ObjectMap.entrySet() is not deprecated.
+  private static final Matcher<ExpressionTree> NOT_OBJECT_2_OBJECT_MAP =
+      not(
+          instanceMethod()
+              .onDescendantOfAny("it.unimi.dsi.fastutil.objects.Object2ObjectFunction"));
+
   @Override
   public Description matchMethodInvocation(MethodInvocationTree tree, VisitorState state) {
     if (DEPRECATED_METHOD.matches(tree, state)) {
       return describeMatch(tree);
     }
-    if (DEPRECATED_ENTRYSET.matches(tree, state)) {
+
+    // We want to match all fastutil maps except for Object2Object maps.
+    if (DEPRECATED_ENTRYSET.matches(tree, state) && NOT_OBJECT_2_OBJECT_MAP.matches(tree, state)) {
       return buildDescription(tree)
           .setMessage("Use type-specific fastutil entrySet method instead.")
           .addFix(
