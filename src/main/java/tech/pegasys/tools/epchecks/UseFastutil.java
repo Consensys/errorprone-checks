@@ -49,25 +49,6 @@ import com.sun.tools.javac.code.TypeTag;
 public class UseFastutil extends BugChecker
     implements NewClassTreeMatcher, MethodInvocationTreeMatcher {
 
-  // We want this check to be disabled by default because it can be annoying,
-  // but we want to keep it because it provides some value to developers. It
-  // is something we could check every once in a while. The problem is, I do
-  // not see a way to have a disabled custom check by default.
-  //
-  // Note: There is a list of disabled checks built-into error prone, but that
-  // is not something we can modify.
-  //
-  //   https://github.com/google/error-prone/blob/
-  //     54e16466efd935b01c7008d300ab8478c9013d6c/core/src/main/java/com/
-  //     google/errorprone/scanner/BuiltInCheckerSuppliers.java#L996
-  //
-  // This is a little jank, but we will use an environment variable instead.
-  // To enable this check, run the build with the flag:
-  //
-  //   USE_FASTUTIL_CHECK=1 ./gradlew build
-  private static final boolean ENABLED =
-      !System.getenv().getOrDefault("USE_FASTUTIL_CHECK", "0").equals("0");
-
   // According to [the docs](https://fastutil.di.unimi.it/docs/index.html):
   // fastutil specializes the most useful HashSet, HashMap, LinkedHashSet,
   // LinkedHashMap, TreeSet, TreeMap, IdentityHashMap, ArrayList and Stack
@@ -117,22 +98,18 @@ public class UseFastutil extends BugChecker
 
   @Override
   public Description matchNewClass(NewClassTree tree, VisitorState state) {
-    if (ENABLED) {
-      if (NEW_ITERABLE.matches(tree, state)) {
-        return checkIterable(tree, state);
-      } else if (NEW_MAP.matches(tree, state)) {
-        return checkMap(tree, state);
-      }
+    if (NEW_ITERABLE.matches(tree, state)) {
+      return checkIterable(tree, state);
+    } else if (NEW_MAP.matches(tree, state)) {
+      return checkMap(tree, state);
     }
     return NO_MATCH;
   }
 
   @Override
   public Description matchMethodInvocation(MethodInvocationTree tree, VisitorState state) {
-    if (ENABLED) {
-      if (ITERABLE_OF.matches(tree, state)) {
-        return checkIterable(tree, state);
-      }
+    if (ITERABLE_OF.matches(tree, state)) {
+      return checkIterable(tree, state);
     }
     return NO_MATCH;
   }
