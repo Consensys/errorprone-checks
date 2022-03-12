@@ -45,6 +45,7 @@ import com.sun.tools.javac.code.TypeTag;
     name = "UseFastutil",
     summary = "Use the fastutil equivalent for better performance.",
     severity = SUGGESTION,
+    suppressionAnnotations = {SuppressWarnings.class},
     linkType = BugPattern.LinkType.NONE)
 public class UseFastutil extends BugChecker
     implements NewClassTreeMatcher, MethodInvocationTreeMatcher {
