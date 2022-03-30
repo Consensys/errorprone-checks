@@ -3,7 +3,6 @@ errorprone-checks
 
 A collection of custom [errorprone] checks.
 
-
 ## Usage
 - Add Consensys maven dependency
 ```groovy

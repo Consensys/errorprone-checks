@@ -81,6 +81,23 @@ public class MathTargetTypePositiveCases {
         long l = Math.min(0, 1) * 1;
     }
 
+    public void binaryOperations() {
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long a = Math.min(0, 1) * 1;
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long b = Math.min(0, 1) * 1L;
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long c = 1 * Math.min(0, 1) * 1L;
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long d = 1 * 1 * 1 * 1 * Math.min(0, 1) * 1L;
+        // BUG: Diagnostic contains: Neither of the function arguments are double types
+        takesDouble(0, Math.min(1 / 2, Math.max(0, 1) - 1), 0);
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long e = Math.min(0, 1) & 27;
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long f = Math.min(0, 1) | 0x80;
+    }
+
     public void expectedLongVars() {
         int a = 0;
         int b = 1;
@@ -91,5 +108,12 @@ public class MathTargetTypePositiveCases {
     public void expectedLongArgs(int a, int b) {
         // BUG: Diagnostic contains: Neither of the function arguments are long types
         long c = Math.min(a, b);
+    }
+
+    public void comparison(int a, int b) {
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        boolean c = 27L == Math.min(a, b);
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        boolean d = Math.min(a, b) == 27L;
     }
 }
