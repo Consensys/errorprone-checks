@@ -29,7 +29,7 @@ dependencies {
     testImplementation 'com.google.errorprone:error_prone_test_helpers:2.7.1'
     testRuntimeOnly 'info.picocli:picocli:4.6.1'
     testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.17.1'
-
+    testRuntimeOnly 'it.unimi.dsi:fastutil:8.5.6'
 }
 
 java {
