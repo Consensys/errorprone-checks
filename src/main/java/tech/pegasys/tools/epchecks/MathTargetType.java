@@ -122,7 +122,6 @@ public class MathTargetType extends BugChecker implements MethodInvocationTreeMa
       return ASTHelpers.getType(variableTree);
     }
 
-    System.out.println(tree);
     return null;
   }
 }
