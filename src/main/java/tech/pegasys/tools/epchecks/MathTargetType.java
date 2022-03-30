@@ -44,7 +44,7 @@ import com.sun.tools.javac.code.Type;
     linkType = BugPattern.LinkType.NONE)
 public class MathTargetType extends BugChecker implements MethodInvocationTreeMatcher {
 
-  // These are the math methods which multiple overloaded versions.
+  // These are the math methods with multiple overloaded versions.
   // There could be type confusion with these functions.
   private static final Matcher<ExpressionTree> POTENTIALLY_CONFUSED_MATH_FUNC =
       staticMethod()
