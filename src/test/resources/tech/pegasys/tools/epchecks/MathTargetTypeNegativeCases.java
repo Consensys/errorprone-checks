@@ -17,8 +17,6 @@ package tech.pegasys.tools.epchecks;
 
 public class MathTargetTypeNegativeCases {
 
-    public void takesLong(int a, long b, int c) {}
-
     public void expectedInt() {
         int a = Math.min(0, 1);
     }
