@@ -92,6 +92,10 @@ public class MathTargetTypePositiveCases {
         long d = 1 * 1 * 1 * 1 * Math.min(0, 1) * 1L;
         // BUG: Diagnostic contains: Neither of the function arguments are double types
         takesDouble(0, Math.min(1 / 2, Math.max(0, 1) - 1), 0);
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long e = Math.min(0, 1) & 27;
+        // BUG: Diagnostic contains: Neither of the function arguments are long types
+        long f = Math.min(0, 1) | 0x80;
     }
 
     public void expectedLongVars() {
