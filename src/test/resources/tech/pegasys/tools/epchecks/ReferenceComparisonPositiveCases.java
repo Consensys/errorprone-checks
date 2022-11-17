@@ -18,31 +18,50 @@ package tech.pegasys.tools.epchecks;
 import java.util.List;
 
 public class ReferenceComparisonPositiveCases {
-    public void comparisonWithIdentifiers(final List<Integer> a, final List<Integer> b) {
+  public void comparisonWithIdentifiers(final List<Integer> a, final List<Integer> b) {
     // BUG: Diagnostic contains: Reference comparison should be value comparison
     if (a == b) {
-      System.out.println("they're the same");
+      return;
     }
-  }
-
-  public void comparisonWithIdentifierAndMethodInvocation(final List<Integer> a) {
     // BUG: Diagnostic contains: Reference comparison should be value comparison
-    if (a == List.of(1, 2, 3)) {
-      System.out.println("they're the same");
+    if (a != b) {
+      return;
+    }
+    // BUG: Diagnostic contains: Reference comparison should be value comparison
+    if (b == a) {
+      return;
+    }
+    // BUG: Diagnostic contains: Reference comparison should be value comparison
+    if (b != a) {
+      return;
     }
   }
 
-  public void comparisonWithMethodInvocationAndIdentifier(final List<Integer> b) {
+  public boolean comparisonReturn(final List<Integer> a, final List<Integer> b) {
+    // BUG: Diagnostic contains: Reference comparison should be value comparison
+    return a == b;
+  }
+
+  public boolean comparisonReturnWithOr(final List<Integer> a, final List<Integer> b) {
+    // BUG: Diagnostic contains: Reference comparison should be value comparison
+    return false || a == b;
+  }
+
+  public void comparisonWithIdentifierAndMethodInvocationr(final List<Integer> b) {
     // BUG: Diagnostic contains: Reference comparison should be value comparison
     if (List.of(1, 2, 3) == b) {
-      System.out.println("they're the same");
+      return;
+    }
+    // BUG: Diagnostic contains: Reference comparison should be value comparison
+    if (b == List.of(1, 2, 3)) {
+      return;
     }
   }
 
   public void comparisonWithMethodInvocations(final List<Integer> b) {
     // BUG: Diagnostic contains: Reference comparison should be value comparison
     if (List.of(1, 2, 3) == List.of(1, 2, 3, 4)) {
-      System.out.println("they're the same");
+      return;
     }
   }
 }

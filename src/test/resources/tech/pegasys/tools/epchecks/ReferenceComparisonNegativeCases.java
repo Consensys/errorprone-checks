@@ -19,53 +19,40 @@ import com.google.common.primitives.Bytes;
 import org.junit.Test;
 
 public class ReferenceComparisonNegativeCases {
-  public void comparisonWithEquals(final Bytes a, final Bytes b) {
-    if (a.equals(b)) {
-      System.out.println("they're the same");
-    }
+  public boolean comparisonWithEquals(final Bytes a, final Bytes b) {
+    return a.equals(b);
   }
 
-  public void comparisonWithEnums() {
-    if (TestEnum.A == TestEnum.B) {
-      System.out.println("they're the same");
-    }
+  public boolean comparisonWithEnums() {
+    return TestEnum.A == TestEnum.B;
   }
 
-  public void comparisonWithEnumVariable(final TestEnum a) {
-    if (a == TestEnum.B) {
-      System.out.println("they're the same");
-    }
-  }
-
-  public void comparisonWithThis() {
+  public boolean comparisonWithThis() {
     Object o = null;
-    if (this == o) {
-      System.out.println("they're the same");
-    }
+    return this == o;
   }
 
-  public void comparisonBoxedPrimitiveAndPrimitive(Integer a) {
-    if (a == 0) {
-      System.out.println("equals zero");
-    }
-    if (0 == a) {
-      System.out.println("equals zero");
-    }
+  public boolean comparisonWithNull(final Bytes a) {
+    return a == null;
   }
 
-  public void comparisonWithEnumVariables(final TestEnum a, final TestEnum b) {
-    if (a == b) {
-      System.out.println("they're the same");
-    }
+  public boolean comparisonBoxedPrimitiveAndPrimitive(final Integer a) {
+    return a == 27;
   }
 
-  public void comparisonWithNull(final Bytes a) {
-    if (a == null) {
-      System.out.println("it's null");
-    }
+  public boolean comparisonWithGetClass(final Bytes a, final Bytes b) {
+    return a.getClass() == b.getClass();
   }
 
-  public enum TestEnum {
+  public boolean comparisonWithEnumVariable(final TestEnum a) {
+    return a == TestEnum.B;
+  }
+
+  public boolean comparisonWithEnumVariables(final TestEnum a, final TestEnum b) {
+    return a == b;
+  }
+
+  private enum TestEnum {
     A,
     B,
     C;

@@ -13,6 +13,11 @@
 package tech.pegasys.tools.epchecks;
 
 import static com.google.errorprone.BugPattern.SeverityLevel.SUGGESTION;
+import static com.google.errorprone.matchers.Description.NO_MATCH;
+import static com.sun.source.tree.Tree.Kind.EQUAL_TO;
+import static com.sun.source.tree.Tree.Kind.IDENTIFIER;
+import static com.sun.source.tree.Tree.Kind.NOT_EQUAL_TO;
+import static com.sun.source.tree.Tree.Kind.NULL_LITERAL;
 
 import com.google.auto.service.AutoService;
 import com.google.errorprone.BugPattern;
@@ -26,7 +31,6 @@ import com.google.errorprone.util.ASTHelpers;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.Tree;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 
 @AutoService(BugChecker.class)
@@ -37,8 +41,7 @@ import com.sun.tools.javac.code.Type;
     linkType = BugPattern.LinkType.NONE)
 public class ReferenceComparison extends BugChecker implements BinaryTreeMatcher {
   private static final Matcher<BinaryTree> EQUAL_OR_NOT_EQUAL =
-      Matchers.anyOf(Matchers.kindIs(Tree.Kind.EQUAL_TO), Matchers.kindIs(Tree.Kind.NOT_EQUAL_TO));
-  private static final Matcher<Tree> IS_ENUM = Matchers.isSubtypeOf("java.lang.Enum");
+      Matchers.anyOf(Matchers.kindIs(EQUAL_TO), Matchers.kindIs(NOT_EQUAL_TO));
 
   @Override
   public Description matchBinary(BinaryTree tree, VisitorState state) {
@@ -46,58 +49,49 @@ public class ReferenceComparison extends BugChecker implements BinaryTreeMatcher
       return Description.NO_MATCH;
     }
 
-    Tree left = tree.getLeftOperand();
-    Tree right = tree.getRightOperand();
-    Type leftType = ASTHelpers.getType(left);
-    Type rightType = ASTHelpers.getType(right);
+    final Tree left = tree.getLeftOperand();
+    final Tree right = tree.getRightOperand();
+    final Type leftType = ASTHelpers.getType(left);
+    final Type rightType = ASTHelpers.getType(right);
 
     if (leftType == null || rightType == null) {
-      return Description.NO_MATCH;
+      return NO_MATCH;
     }
 
     // When a boxed type is compared to a primitive, it'll be unboxed.
     if (leftType.isPrimitive() || rightType.isPrimitive()) {
-      return Description.NO_MATCH;
+      return NO_MATCH;
     }
 
     // Ignore null comparisons.
-    Matcher<Tree> isNull = Matchers.kindIs(Tree.Kind.NULL_LITERAL);
+    final Matcher<Tree> isNull = Matchers.kindIs(NULL_LITERAL);
     if (isNull.matches(left, state) || isNull.matches(right, state)) {
-      return Description.NO_MATCH;
+      return NO_MATCH;
     }
 
     // Ignore comparisons with "this" variables.
     if (isThis(left) || isThis(right)) {
-      return Description.NO_MATCH;
+      return NO_MATCH;
     }
 
     // Ignore reference comparisons with enums. Those are a special case.
-    if (isEnum(left, state) || isEnum(right, state)) {
-      return Description.NO_MATCH;
+    final Matcher<Tree> isEnum = Matchers.isSubtypeOf("java.lang.Enum");
+    if (isEnum.matches(left, state) || isEnum.matches(right, state)) {
+      return NO_MATCH;
     }
 
     // Ignore class comparisons, those are generally fine.
-    Matcher<Tree> isClass = Matchers.isSubtypeOf("java.lang.Class");
+    final Matcher<Tree> isClass = Matchers.isSubtypeOf("java.lang.Class");
     if (isClass.matches(left, state) || isClass.matches(right, state)) {
-      return Description.NO_MATCH;
+      return NO_MATCH;
     }
 
     return describeMatch(tree);
   }
 
-  private static boolean isEnum(Tree tree, VisitorState state) {
-    Symbol symbol = ASTHelpers.getSymbol(tree);
-    if (symbol != null) {
-      if (symbol.isEnum()) {
-        return true;
-      }
-    }
-    return IS_ENUM.matches(tree, state);
-  }
-
   private static boolean isThis(Tree tree) {
-    if (tree.getKind().equals(Tree.Kind.IDENTIFIER)) {
-      IdentifierTree identifier = (IdentifierTree) tree;
+    if (tree.getKind().equals(IDENTIFIER)) {
+      final IdentifierTree identifier = (IdentifierTree) tree;
       return identifier.getName().contentEquals("this");
     }
     return false;
