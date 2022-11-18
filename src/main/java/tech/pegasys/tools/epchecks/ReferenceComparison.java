@@ -36,7 +36,7 @@ import com.sun.tools.javac.code.Type;
 @AutoService(BugChecker.class)
 @BugPattern(
     name = "ReferenceComparison",
-    summary = "Reference comparison should be value comparison",
+    summary = "Reference comparison should be value comparison.",
     severity = SUGGESTION,
     linkType = BugPattern.LinkType.NONE)
 public class ReferenceComparison extends BugChecker implements BinaryTreeMatcher {
