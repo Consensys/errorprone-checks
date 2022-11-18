@@ -45,7 +45,6 @@ public class JavaCase extends BugChecker
     implements MethodTreeMatcher, ClassTreeMatcher, VariableTreeMatcher {
 
   private static final Pattern PATTERN_HAS_LOWER = Pattern.compile("^.*[a-z].*$");
-  private static final Pattern PATTERN_HAS_UPPER = Pattern.compile("^.*[A-Z].*$");
   private static final Pattern PATTERN_STARTS_WITH_LOWER = Pattern.compile("^[a-z].*$");
   private static final Pattern PATTERN_STARTS_WITH_UPPER = Pattern.compile("^[A-Z].*$");
   private static final Pattern PATTERN_UNDERSCORES = Pattern.compile("^_+$");
