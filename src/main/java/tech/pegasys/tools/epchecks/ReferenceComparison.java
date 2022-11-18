@@ -33,6 +33,12 @@ import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Type;
 
+/**
+ * This check is very similar to the <a
+ * href=http://errorprone.info/bugpattern/ReferenceEquality>ReferenceEquality</a> check in Error
+ * Prone. But this one identifies <code>Object</code> comparisons without an explicitly declared
+ * <code>equals()</code> method.
+ */
 @AutoService(BugChecker.class)
 @BugPattern(
     name = "ReferenceComparison",
@@ -45,8 +51,9 @@ public class ReferenceComparison extends BugChecker implements BinaryTreeMatcher
 
   @Override
   public Description matchBinary(BinaryTree tree, VisitorState state) {
+    // We're looking for reference comparisons (== and !=).
     if (!EQUAL_OR_NOT_EQUAL.matches(tree, state)) {
-      return Description.NO_MATCH;
+      return NO_MATCH;
     }
 
     final Tree left = tree.getLeftOperand();
@@ -69,7 +76,7 @@ public class ReferenceComparison extends BugChecker implements BinaryTreeMatcher
       return NO_MATCH;
     }
 
-    // Ignore comparisons with "this" variables.
+    // Ignore comparisons with "this" identifier.
     if (isThis(left) || isThis(right)) {
       return NO_MATCH;
     }
