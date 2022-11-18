@@ -36,8 +36,8 @@ import com.sun.tools.javac.code.Type;
 /**
  * This check is very similar to the <a
  * href=http://errorprone.info/bugpattern/ReferenceEquality>ReferenceEquality</a> check in Error
- * Prone. But this one identifies <code>Object</code> comparisons without an explicitly declared
- * <code>equals()</code> method.
+ * Prone. But this one identifies <code>Object</code> comparisons for types without an explicitly
+ * declared <code>equals()</code> method.
  */
 @AutoService(BugChecker.class)
 @BugPattern(
