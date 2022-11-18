@@ -26,12 +26,12 @@ public class JavaCaseTest {
   }
 
   @Test
-  public void camelCasePositiveCases() {
+  public void javaCasePositiveCases() {
     compilationHelper.addSourceFile("JavaCasePositiveCases.java").doTest();
   }
 
   @Test
-  public void camelCaseNegativeCases() {
+  public void javaCaseNegativeCases() {
     compilationHelper.addSourceFile("JavaCaseNegativeCases.java").doTest();
   }
 }
