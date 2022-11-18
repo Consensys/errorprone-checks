@@ -5,7 +5,7 @@ orbs:
 executors:
   executor_med:  # 2cpu, 4G ram
     docker:
-      - image: cimg/openjdk:11.0.8-jdk-buster
+      - image: cimg/openjdk:11.0.13
         auth:
           # Don't panic, throw away account to avoid Docker rate limits when downloading.
           # Second reason we're doing this is so that forked PRs from external contributors works ie env vars aren't visible to forked PRs from within contexts
