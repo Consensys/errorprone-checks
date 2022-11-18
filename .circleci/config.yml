@@ -7,8 +7,10 @@ executors:
     docker:
       - image: circleci/openjdk:11.0.8-jdk-buster
         auth:
-          username: $DOCKER_USER_RO
-          password: $DOCKER_PASSWORD_RO
+          # Don't panic, throw away account to avoid Docker rate limits when downloading.
+          # Second reason we're doing this is so that forked PRs from external contributors works ie env vars aren't visible to forked PRs from within contexts
+          username: "errorpronechecks1234"
+          password: "shahw7na2Aoquem"
     resource_class: medium
     working_directory: ~/project
     environment:
@@ -88,8 +90,6 @@ workflows:
           filters:
             tags: &filters-release-tags
               only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
-          context:
-            - dockerhub-quorumengineering-ro
       - publish:
           filters:
             tags:
