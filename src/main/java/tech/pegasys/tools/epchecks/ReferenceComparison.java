@@ -46,13 +46,16 @@ import com.sun.tools.javac.code.Type;
     severity = SUGGESTION,
     linkType = BugPattern.LinkType.NONE)
 public class ReferenceComparison extends BugChecker implements BinaryTreeMatcher {
-  private static final Matcher<BinaryTree> EQUAL_OR_NOT_EQUAL =
+  private static final Matcher<BinaryTree> REFERENCE_COMPARISON =
       Matchers.anyOf(Matchers.kindIs(EQUAL_TO), Matchers.kindIs(NOT_EQUAL_TO));
+  private static final Matcher<Tree> NULL = Matchers.kindIs(NULL_LITERAL);
+  private static final Matcher<Tree> ENUM = Matchers.isSubtypeOf("java.lang.Enum");
+  private static final Matcher<Tree> CLASS = Matchers.isSubtypeOf("java.lang.Class");
 
   @Override
   public Description matchBinary(BinaryTree tree, VisitorState state) {
     // We're looking for reference comparisons (== and !=).
-    if (!EQUAL_OR_NOT_EQUAL.matches(tree, state)) {
+    if (!REFERENCE_COMPARISON.matches(tree, state)) {
       return NO_MATCH;
     }
 
@@ -70,26 +73,23 @@ public class ReferenceComparison extends BugChecker implements BinaryTreeMatcher
       return NO_MATCH;
     }
 
-    // Ignore null comparisons.
-    final Matcher<Tree> isNull = Matchers.kindIs(NULL_LITERAL);
-    if (isNull.matches(left, state) || isNull.matches(right, state)) {
-      return NO_MATCH;
-    }
-
     // Ignore comparisons with "this" identifier.
     if (isThis(left) || isThis(right)) {
       return NO_MATCH;
     }
 
+    // Ignore null comparisons.
+    if (NULL.matches(left, state) || NULL.matches(right, state)) {
+      return NO_MATCH;
+    }
+
     // Ignore reference comparisons with enums. Those are a special case.
-    final Matcher<Tree> isEnum = Matchers.isSubtypeOf("java.lang.Enum");
-    if (isEnum.matches(left, state) || isEnum.matches(right, state)) {
+    if (ENUM.matches(left, state) || ENUM.matches(right, state)) {
       return NO_MATCH;
     }
 
     // Ignore class comparisons, those are generally fine.
-    final Matcher<Tree> isClass = Matchers.isSubtypeOf("java.lang.Class");
-    if (isClass.matches(left, state) || isClass.matches(right, state)) {
+    if (CLASS.matches(left, state) || CLASS.matches(right, state)) {
       return NO_MATCH;
     }
 
