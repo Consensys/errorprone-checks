@@ -37,13 +37,16 @@ import com.sun.tools.javac.code.Type;
     severity = SUGGESTION,
     linkType = BugPattern.LinkType.NONE)
 public class DoNotReturnNullOptionals extends BugChecker implements ReturnTreeMatcher {
-  private static final Matcher<Tree> NULL = Matchers.kindIs(NULL_LITERAL);
+  private static final Matcher<Tree> IS_NULL_LITERAL = Matchers.kindIs(NULL_LITERAL);
 
   @Override
   public Description matchReturn(final ReturnTree tree, final VisitorState state) {
-    if (tree == null || !NULL.matches(tree.getExpression(), state)) {
+    // Filter out statements that do not return null.
+    if (tree == null || !IS_NULL_LITERAL.matches(tree.getExpression(), state)) {
       return NO_MATCH;
     }
+
+    // If the return type is an optional, it's match.
     final Type returnType = getReturnType(state);
     if (returnType != null && isOptional(returnType)) {
       return describeMatch(tree);
@@ -64,7 +67,8 @@ public class DoNotReturnNullOptionals extends BugChecker implements ReturnTreeMa
         case LAMBDA_EXPRESSION:
           type = state.getTypes().findDescriptorType(ASTHelpers.getType(parent)).getReturnType();
           break outer;
-        default: // fall out
+        default:
+          // Fall out.
       }
     }
     return type;
