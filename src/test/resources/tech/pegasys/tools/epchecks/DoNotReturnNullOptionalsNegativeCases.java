@@ -14,7 +14,10 @@
  */
 package tech.pegasys.tools.epchecks;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 public class DoNotReturnNullOptionalsNegativeCases {
@@ -32,5 +35,16 @@ public class DoNotReturnNullOptionalsNegativeCases {
   @Nullable
   public Optional<Long> returnsNullButAnnotatedWithNullable() {
     return Optional.empty();
+  }
+
+  public Optional<List<Integer>> anonFuncReturnsNull() {
+    final List<Integer> list = List.of(1, 2, 3);
+    return Optional.of(
+        list.stream().map(n -> {
+          if (n == 2) {
+            return null;
+          }
+          return n;
+        }).collect(Collectors.toList()));
   }
 }

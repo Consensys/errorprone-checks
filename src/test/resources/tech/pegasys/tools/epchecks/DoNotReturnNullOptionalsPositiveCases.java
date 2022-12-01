@@ -19,15 +19,14 @@ import java.util.Optional;
 
 public class DoNotReturnNullOptionalsPositiveCases {
 
-  // BUG: Diagnostic contains: Do not return null optionals.
   public Optional<Long> returnsNull() {
+    // BUG: Diagnostic contains: Do not return null optionals.
     return null;
   }
 
-  // BUG: Diagnostic contains: Do not return null optionals.
   public Optional<Long> sometimesReturnsNull(boolean random) {
     if (random) {
-
+      // BUG: Diagnostic contains: Do not return null optionals.
       return null;
     }
     return Optional.of(2L);
