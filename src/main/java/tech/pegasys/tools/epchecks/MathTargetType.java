@@ -68,7 +68,9 @@ public class MathTargetType extends BugChecker implements MethodInvocationTreeMa
     if (POTENTIALLY_CONFUSED_MATH_FUNC.matches(tree, state)) {
       Tree parent = state.getPath().getParentPath().getLeaf();
       Type type = getTargetType(tree, parent, state, state.getPath().getParentPath());
-      if (type != null && !anyMethodArgIs(tree, state, type.getKind())) {
+      if (type != null
+          && type.getKind() != TypeKind.TYPEVAR
+          && !anyMethodArgIs(tree, state, type.getKind())) {
         String typeName = type.getKind().toString().toLowerCase();
         return buildDescription(tree)
             .setMessage(

@@ -15,6 +15,8 @@
 
 package tech.pegasys.tools.epchecks;
 
+import java.util.Optional;
+
 public class MathTargetTypeNegativeCases {
 
     public void expectedInt() {
@@ -50,5 +52,9 @@ public class MathTargetTypeNegativeCases {
         int b = Math.min(0, 1) - 1;
         int c = Math.min(0, 1) / 1;
         int d = Math.min(0, 1) * 1;
+    }
+
+    public void resultIsTypevar() {
+        Optional<Integer> a = Optional.of(Math.min(0, 1));
     }
 }
