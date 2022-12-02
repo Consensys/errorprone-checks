@@ -13,56 +13,68 @@
 package tech.pegasys.tools.epchecks;
 
 import static com.google.errorprone.BugPattern.SeverityLevel.SUGGESTION;
-import static com.google.errorprone.matchers.Matchers.contains;
+import static com.google.errorprone.matchers.Description.NO_MATCH;
 import static com.sun.source.tree.Tree.Kind.NULL_LITERAL;
 
 import com.google.auto.service.AutoService;
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
 import com.google.errorprone.bugpatterns.BugChecker;
-import com.google.errorprone.bugpatterns.BugChecker.MethodTreeMatcher;
+import com.google.errorprone.bugpatterns.BugChecker.ReturnTreeMatcher;
 import com.google.errorprone.matchers.Description;
 import com.google.errorprone.matchers.Matcher;
+import com.google.errorprone.matchers.Matchers;
+import com.google.errorprone.util.ASTHelpers;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.Tree;
+import com.sun.tools.javac.code.Type;
 
-/*
- * This is reworked from an example found at:
- * https://github.com/google/error-prone/wiki/Writing-a-check
- */
-
-@AutoService(BugChecker.class) // the service descriptor
+@AutoService(BugChecker.class)
 @BugPattern(
     name = "DoNotReturnNullOptionals",
     summary = "Do not return null optionals.",
     severity = SUGGESTION,
     linkType = BugPattern.LinkType.NONE)
-public class DoNotReturnNullOptionals extends BugChecker implements MethodTreeMatcher {
+public class DoNotReturnNullOptionals extends BugChecker implements ReturnTreeMatcher {
+  private static final Matcher<Tree> IS_NULL_LITERAL = Matchers.kindIs(NULL_LITERAL);
 
-  private static class ReturnNullMatcher implements Matcher<Tree> {
-
-    @Override
-    public boolean matches(final Tree tree, final VisitorState state) {
-      if ((tree instanceof ReturnTree) && (((ReturnTree) tree).getExpression() != null)) {
-        return ((ReturnTree) tree).getExpression().getKind() == NULL_LITERAL;
-      }
-      return false;
+  @Override
+  public Description matchReturn(final ReturnTree tree, final VisitorState state) {
+    // Filter out statements that do not return null.
+    if (tree == null || !IS_NULL_LITERAL.matches(tree.getExpression(), state)) {
+      return NO_MATCH;
     }
+
+    // If the return type is an optional, it's match.
+    final Type returnType = getReturnType(state);
+    if (returnType != null && isOptional(returnType)) {
+      return describeMatch(tree);
+    }
+    return NO_MATCH;
   }
 
-  private static final Matcher<Tree> RETURN_NULL = new ReturnNullMatcher();
-  private static final Matcher<Tree> CONTAINS_RETURN_NULL = contains(RETURN_NULL);
-
-  @SuppressWarnings("TreeToString")
-  @Override
-  public Description matchMethod(final MethodTree tree, final VisitorState state) {
-    if ((tree.getReturnType() == null)
-        || !tree.getReturnType().toString().startsWith("Optional<")
-        || (tree.getBody() == null)
-        || (!CONTAINS_RETURN_NULL.matches(tree.getBody(), state))) {
-      return Description.NO_MATCH;
+  // This logic comes from the IntLongMath check:
+  // https://github.com/google/error-prone/blob/5391186274d64031b5536a3e95fc1750711fb4b2/core/src/main/java/com/google/errorprone/bugpatterns/IntLongMath.java#L50-L72
+  private static Type getReturnType(final VisitorState state) {
+    Type type = null;
+    outer:
+    for (Tree parent : state.getPath()) {
+      switch (parent.getKind()) {
+        case METHOD:
+          type = ASTHelpers.getType(((MethodTree) parent).getReturnType());
+          break outer;
+        case LAMBDA_EXPRESSION:
+          type = state.getTypes().findDescriptorType(ASTHelpers.getType(parent)).getReturnType();
+          break outer;
+        default:
+          // Fall out.
+      }
     }
-    return describeMatch(tree);
+    return type;
+  }
+
+  private static boolean isOptional(final Type type) {
+    return type.toString().startsWith("java.util.Optional<");
   }
 }
