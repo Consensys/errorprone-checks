@@ -31,4 +31,16 @@ public class DoNotReturnNullOptionalsPositiveCases {
     }
     return Optional.of(2L);
   }
+
+  public Optional<Long> returnsVarAssignedNull() {
+    Optional<Long> var = null;
+    // BUG: Diagnostic contains: Do not return null optionals.
+    return var;
+  }
+
+  public Optional<Long> returnsVarMaybeAssignedNull(final boolean flag) {
+    Optional<Long> var = flag ? Optional.of(2L) : null;
+    // BUG: Diagnostic contains: Do not return null optionals.
+    return var;
+  }
 }
