@@ -14,20 +14,20 @@ package tech.pegasys.tools.epchecks;
 
 import static com.google.errorprone.BugPattern.SeverityLevel.SUGGESTION;
 import static com.google.errorprone.matchers.Description.NO_MATCH;
-import static com.sun.source.tree.Tree.Kind.NULL_LITERAL;
 
 import com.google.auto.service.AutoService;
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
 import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.bugpatterns.BugChecker.ReturnTreeMatcher;
+import com.google.errorprone.dataflow.nullnesspropagation.Nullness;
+import com.google.errorprone.dataflow.nullnesspropagation.TrustingNullnessAnalysis;
 import com.google.errorprone.matchers.Description;
-import com.google.errorprone.matchers.Matcher;
-import com.google.errorprone.matchers.Matchers;
 import com.google.errorprone.util.ASTHelpers;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Type;
 
 @AutoService(BugChecker.class)
@@ -37,21 +37,33 @@ import com.sun.tools.javac.code.Type;
     severity = SUGGESTION,
     linkType = BugPattern.LinkType.NONE)
 public class DoNotReturnNullOptionals extends BugChecker implements ReturnTreeMatcher {
-  private static final Matcher<Tree> IS_NULL_LITERAL = Matchers.kindIs(NULL_LITERAL);
 
   @Override
   public Description matchReturn(final ReturnTree tree, final VisitorState state) {
-    // Filter out statements that do not return null.
-    if (tree == null || !IS_NULL_LITERAL.matches(tree.getExpression(), state)) {
+    final Type returnType = getReturnType(state);
+    if (returnType == null || !isOptional(returnType)) {
       return NO_MATCH;
     }
 
-    // If the return type is an optional, it's match.
-    final Type returnType = getReturnType(state);
-    if (returnType != null && isOptional(returnType)) {
-      return describeMatch(tree);
+    /*
+     * This block of code checks if the return value is null/nullable in some data flow. We use the
+     * "trusting" nullness analysis here because the other one (NullnessAnalysis) will incorrectly
+     * report some values as nullable, such as Optional.of(2L).
+     *
+     * According to the documentation for TrustingNullAnalysis:
+     *
+     * This variant "trusts" Nullable annotations, similar to how a modular nullness checker like
+     * the checkerframework's would, meaning method parameters, fields, and method returns are
+     * assumed Nullness.NULLABLE only if annotated so.
+     */
+    final TrustingNullnessAnalysis analysis = TrustingNullnessAnalysis.instance(state.context);
+    final TreePath exprPath = new TreePath(state.getPath(), tree.getExpression());
+    final Nullness nullness = analysis.getNullness(exprPath, state.context);
+    if (nullness.equals(Nullness.NONNULL)) {
+      return NO_MATCH;
     }
-    return NO_MATCH;
+
+    return describeMatch(tree);
   }
 
   // This logic comes from the IntLongMath check:

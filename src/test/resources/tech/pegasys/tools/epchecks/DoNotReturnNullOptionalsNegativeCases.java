@@ -47,4 +47,9 @@ public class DoNotReturnNullOptionalsNegativeCases {
           return n;
         }).collect(Collectors.toList()));
   }
+
+  public Optional<Long> returnsVarInConditional(final boolean flag) {
+    Optional<Long> var = flag ? Optional.of(2L) : Optional.of(3L);
+    return var;
+  }
 }
