@@ -1,17 +1,31 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id "com.diffplug.spotless" version "5.12.5"
-    id 'org.ajoberstar.grgit' version '4.1.0'
+    id "com.diffplug.spotless" version "8.4.0"
+    id "me.qoomon.git-versioning" version "6.4.4"
+    id "org.jreleaser" version "1.23.0"
 }
 
-group = "tech.pegasys.tools.epchecks"
-rootProject.version = calculatePublishVersion()
-def projectSpecificVersion = calculateVersion()
+group = "io.consensys.protocols"
 
-// used by maven publish
-def cloudsmithUser = project.hasProperty('cloudsmithUser') ? project.property('cloudsmithUser') : System.getenv('CLOUDSMITH_USER')
-def cloudsmithKey = project.hasProperty('cloudsmithApiKey') ? project.property('cloudsmithApiKey') : System.getenv('CLOUDSMITH_API_KEY')
+version = "UNKNOWN"
+
+gitVersioning.apply {
+    refs {
+        tag(".+") {
+            version = "\${ref}"
+        }
+        branch("main") {
+            version = "develop"
+        }
+        branch(".+") {
+            version = "\${ref}"
+        }
+    }
+    rev {
+        version = "UNKNOWN"
+    }
+}
 
 repositories {
     mavenCentral()
@@ -21,12 +35,12 @@ dependencies {
 
     implementation 'com.google.auto.service:auto-service-annotations:1.0'
     annotationProcessor 'com.google.auto.service:auto-service:1.0'
-    implementation 'com.google.errorprone:error_prone_check_api:2.7.1'
+    implementation 'com.google.errorprone:error_prone_check_api:2.36.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-    testImplementation 'com.google.errorprone:error_prone_test_helpers:2.7.1'
+    testImplementation 'com.google.errorprone:error_prone_test_helpers:2.36.0'
     testRuntimeOnly 'info.picocli:picocli:4.6.1'
     testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.17.1'
     testRuntimeOnly 'it.unimi.dsi:fastutil:8.5.6'
@@ -34,15 +48,16 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(21)
     }
+    withJavadocJar()
     withSourcesJar()
 }
 
 spotless {
     java {
         removeUnusedImports()
-        googleJavaFormat('1.10.0')
+        googleJavaFormat()
         importOrder 'tech.pegasys', 'java', ''
         trimTrailingWhitespace()
         endWithNewline()
@@ -50,91 +65,103 @@ spotless {
     }
 }
 
+def compilerExports = [
+    '--add-exports', 'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+    '--add-exports', 'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+    '--add-exports', 'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+]
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += compilerExports
+}
+
+tasks.named('javadoc') {
+    options.addMultilineStringsOption('-add-exports').value = [
+        'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+        'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+        'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+    ]
+}
+
 tasks.named('test') {
     // Use junit platform (aka JUnit 5) for unit tests.
     useJUnitPlatform()
     testLogging.showStandardStreams = true
+    jvmArgs += [
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+        '--add-exports', 'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+        '--add-opens', 'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+        '--add-opens', 'jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+    ]
 }
 
 publishing {
     publications {
-        library(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
-            versionMapping {
-                usage('java-api') {
-                    fromResolutionOf('runtimeClasspath')
-                }
-                usage('java-runtime') {
-                    fromResolutionResult()
-                }
-            }
             pom {
-                name = 'errorprone-checks'
+                name = "${project.name}"
                 description = 'A collection of custom error prone checks'
-                url = 'https://github.com/ConsenSys/errorprone-checks'
+                url = 'https://github.com/Consensys/errorprone-checks'
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
                         url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
+                developers {
+                    developer {
+                        id = "consensys"
+                        name = "Protocols Team"
+                        email = "devops@consensys.net"
+                    }
+                }
                 scm {
-                    connection = 'scm:git:git://github.com/ConsenSys/errorprone-checks.git'
-                    developerConnection = 'scm:git:ssh://github.com/ConsenSys/errorprone-checks.git'
-                    url = 'https://github.com/ConsenSys/errorprone-checks'
+                    connection = 'scm:git:git://github.com/Consensys/errorprone-checks.git'
+                    developerConnection = 'scm:git:ssh://github.com/Consensys/errorprone-checks.git'
+                    url = 'https://github.com/Consensys/errorprone-checks'
                 }
             }
         }
     }
     repositories {
         maven {
-            name = "cloudsmith"
-            url = "https://api-g.cloudsmith.io/maven/consensys/maven/"
-            credentials {
-                username = cloudsmithUser
-                password = cloudsmithKey
-            }
+            url = layout.buildDirectory.dir("staging-deploy")
         }
     }
 }
 
-// Calculate the version that this build would be published under (if it is published)
-// If this exact commit is tagged, use the tag
-// If this is on a release-* branch, use the most recent tag appended with +develop (e.g. 0.1.1-RC1+develop)
-// Otherwise, use develop
-def calculatePublishVersion() {
-    if (!grgit) {
-        return 'UNKNOWN'
+jreleaser {
+    release {
+        github {
+            // Creating and tagging a release is done manually
+            skipRelease = true
+            skipTag = true
+            // injecting a fake value to make JReleaser happy
+            token = "foobar"
+        }
     }
-    def specificVersion = calculateVersion()
-    def isReleaseBranch = grgit.branch.current().name.startsWith('release-')
-    if (specificVersion.contains('+')) {
-        return isReleaseBranch ? "${specificVersion.substring(0, specificVersion.indexOf('+'))}+develop" : "develop"
+    signing {
+        active = 'ALWAYS'
+        armored = true
     }
-    return specificVersion
-}
-
-// Calculate specific version of this project.
-// If this exact commit is tagged, use the tag
-// Otherwise use git describe --tags and replace the - after the tag with a +
-def calculateVersion() {
-    if (!grgit) {
-        return 'UNKNOWN'
-    }
-    String version = grgit.describe(tags: true)
-    if (version == null) {
-        return "UNKNOWN+g${grgit.head().abbreviatedId}"
-    }
-    def versionPattern = ~/^(?<lastVersion>.*)-(?<devVersion>[0-9]+-g[a-z0-9]+)$/
-    def matcher = version =~ versionPattern
-    if (matcher.find()) {
-        return "${matcher.group("lastVersion")}+${matcher.group("devVersion")}"
-    }
-    return version
-}
-
-task printVersion() {
-    doFirst {
-        print "Specific version: ${projectSpecificVersion}  Publish version: ${project.version}"
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                    retryDelay = 15
+                    maxRetries = 100
+                }
+            }
+        }
     }
 }
