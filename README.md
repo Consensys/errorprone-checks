@@ -1,21 +1,21 @@
 errorprone-checks
 -----------------
 
-A collection of custom [errorprone] checks.
+[![Maven Central](https://img.shields.io/maven-central/v/io.consensys.protocols/errorprone-checks)](https://central.sonatype.com/artifact/io.consensys.protocols/errorprone-checks)
+
+A collection of custom [errorprone] checks built against Error Prone 2.36.0.
 
 ## Usage
-- Add Consensys maven dependency
+- Add errorprone-checks dependency
 ```groovy
 repositories {
     mavenCentral()
-    maven { url "https://artifacts.consensys.net/public/maven/maven/" }
 }
 ```
-- Add errorprone-checks dependency
 ```groovy
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:<version>")
-    errorprone("tech.pegasys.tools.epchecks:errorprone-checks:<version>")
+    errorprone("com.google.errorprone:error_prone_core:2.36.0")
+    errorprone("io.consensys.protocols:errorprone-checks:<version>")
 }
 ```
 
